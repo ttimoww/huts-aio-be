@@ -18,6 +18,7 @@ import { User } from './user/user.entity';
             password: process.env.DB_PASSWORD,
             database: process.env.DB_NAME,
             synchronize: process.env.NODE_ENV === 'development',
+            ssl: process.env.NODE_ENV === 'production' ? { rejectUnauthorized: false } : false,
             logging: false,
             entities: [User]
         }),
