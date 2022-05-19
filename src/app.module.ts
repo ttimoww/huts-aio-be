@@ -9,16 +9,16 @@ import { AuthModule } from './auth/auth.module';
 import { User } from './user/user.entity';
 import { CheckoutModule } from './checkout/checkout.module';
 
-console.log('===============');
-console.log(process.env.TYPEORM_URL);
-console.log('===============');
 @Module({
     imports: [
         TypeOrmModule.forRoot({
             type: 'postgres',
-            url: process.env.TYPEORM_URL,
+            host: process.env.TYPEORM_HOST,
+            port: +process.env.TYPEORM_PORT,
+            username: process.env.TYPEORM_USERNAME,
+            password: process.env.TYPEORM_PASSWORD,
+            database: process.env.TYPEORM_NAME,
             synchronize: process.env.NODE_ENV === 'development',
-            ssl: process.env.NODE_ENV === 'production' ? { rejectUnauthorized: false } : false,
             logging: false,
             entities: [User]
         }),
