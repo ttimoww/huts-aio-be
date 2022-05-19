@@ -9,6 +9,9 @@ import { AuthModule } from './auth/auth.module';
 import { User } from './user/user.entity';
 import { CheckoutModule } from './checkout/checkout.module';
 
+console.log('===============');
+console.log(process.env.TYPEORM_URL);
+console.log('===============');
 @Module({
     imports: [
         TypeOrmModule.forRoot({
