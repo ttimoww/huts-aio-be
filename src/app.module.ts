@@ -7,6 +7,7 @@ import { AuthModule } from './auth/auth.module';
 
 // Entities
 import { User } from './user/user.entity';
+import { CheckoutModule } from './checkout/checkout.module';
 
 @Module({
     imports: [
@@ -23,7 +24,8 @@ import { User } from './user/user.entity';
             entities: [User]
         }),
         AuthModule,
-        UserModule
+        UserModule,
+        CheckoutModule
     ],
     controllers: [],
     providers: [],
