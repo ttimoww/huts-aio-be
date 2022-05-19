@@ -13,7 +13,7 @@ import { CheckoutModule } from './checkout/checkout.module';
     imports: [
         TypeOrmModule.forRoot({
             type: 'postgres',
-            url: process.env.DATABASE_URL,
+            url: process.env.TYPEORM_URL,
             synchronize: process.env.NODE_ENV === 'development',
             ssl: process.env.NODE_ENV === 'production' ? { rejectUnauthorized: false } : false,
             logging: false,
