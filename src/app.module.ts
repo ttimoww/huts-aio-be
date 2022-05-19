@@ -9,6 +9,8 @@ import { AuthModule } from './auth/auth.module';
 import { User } from './user/user.entity';
 import { CheckoutModule } from './checkout/checkout.module';
 
+console.log(process.env.CA_CERT);
+
 @Module({
     imports: [
         TypeOrmModule.forRoot({
@@ -19,6 +21,10 @@ import { CheckoutModule } from './checkout/checkout.module';
             password: process.env.TYPEORM_PASSWORD,
             database: process.env.TYPEORM_NAME,
             synchronize: process.env.NODE_ENV === 'development',
+            ssl: {
+                rejectUnauthorized: true,
+                ca: process.env.CA_CERT
+            },            
             logging: false,
             entities: [User]
         }),
