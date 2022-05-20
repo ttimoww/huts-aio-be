@@ -45,11 +45,11 @@ export class AuthService {
             const { data } = resp;
 
             return new HyperKeyData(
-                data.user.discord.tag, 
+                data.user.discord.username, 
                 data.user.discord.id, 
                 data.user.photo_url,
                 data.email,
-                data.plan,
+                data.plan.id,
                 data.key,
                 data.id
             );
@@ -69,6 +69,7 @@ export class AuthService {
      * @param key The Hyper key
      */
     async validateHyperKey(req: Request, key: string): Promise<User> {
+        this.logger.verbose(`Checking ${key}...`);
         const ip = requestIp.getClientIp(<any>req);
         const keyData = await this.getHyperKeyData(key);
         const user = await this.userService.findOne({ where: { licenseId: keyData.licenseId } });
