@@ -20,7 +20,8 @@ console.log(process.env.CA_CERT);
             username: process.env.TYPEORM_USERNAME,
             password: process.env.TYPEORM_PASSWORD,
             database: process.env.TYPEORM_DATABASE,
-            synchronize: process.env.NODE_ENV === 'development',
+            // synchronize: process.env.NODE_ENV === 'development',
+            synchronize: true,
             ssl: process.env.NODE_ENV === 'production' ? { rejectUnauthorized: true, ca: process.env.CA_CERT } : false,            
             logging: false,
             entities: [User]
