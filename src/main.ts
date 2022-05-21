@@ -3,6 +3,7 @@ import { NestFactory } from '@nestjs/core';
 import { ValidationPipe } from '@nestjs/common';
 
 // Packages
+import helmet from 'helmet';
 import { SwaggerModule, DocumentBuilder } from '@nestjs/swagger';
 import * as dotenv from 'dotenv';
 dotenv.config();
@@ -13,14 +14,13 @@ import { AppModule } from './app.module';
 async function bootstrap() {
     const app = await NestFactory.create(AppModule);
 
-    // Setup validation.
-    app.useGlobalPipes(
-        new ValidationPipe({
-            transform: true,
-        }),
-    );
+    // Helmet
+    app.use(helmet());
 
-    // Setup Swagger Docs
+    // Body validation
+    app.useGlobalPipes(new ValidationPipe({ transform: true }),);
+
+    // Swagger
     if (process.env.NODE_ENV === 'development'){
         const config = new DocumentBuilder()
             .addBearerAuth()

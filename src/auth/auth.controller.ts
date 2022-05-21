@@ -13,7 +13,7 @@ import { Public } from './decorators/public.decorator';
 import { LocalAuthGuard } from './guards/local.guard';
 
 // Entities
-import { User } from 'src/user/entities/user.entity';
+import { User } from './../user/entities/user.entity';
 import { License } from './license.entity';
 
 @Controller('/auth')

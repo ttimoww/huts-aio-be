@@ -1,5 +1,5 @@
+import { Checkout } from './../../checkout/checkout.entity';
 import { Entity, PrimaryGeneratedColumn, Column, OneToMany } from 'typeorm';
-import { Checkout } from 'src/checkout/checkout.entity';
 import { License } from '../../auth/license.entity';
 
 @Entity()

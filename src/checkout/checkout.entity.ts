@@ -1,6 +1,6 @@
 import { Entity, PrimaryGeneratedColumn, Column, ManyToOne } from 'typeorm';
-import { Store } from 'src/lib/enums/store.enum';
-import { User } from 'src/user/entities/user.entity';
+import { Store } from './../lib/enums/store.enum';
+import { User } from './../user/entities/user.entity';
 
 @Entity()
 export class Checkout{

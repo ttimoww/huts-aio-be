@@ -9,7 +9,7 @@ import * as requestIp from 'request-ip';
 import { Repository } from 'typeorm';
 
 // Services
-import { UserService } from 'src/user/user.service';
+import { UserService } from './../user/user.service';
 
 // Entities
 import { User } from '../user/entities/user.entity';
@@ -38,7 +38,7 @@ export class AuthService {
      * Check if the license key is valid, if key is invalid throw InvalidKeyException
      * @param key The Hyper license key
      */
-    private async getHyperKeyData(key: string): Promise<HyperKeyData>{
+    async _getHyperKeyData(key: string): Promise<HyperKeyData>{
         try {
             const resp = await lastValueFrom(this.httpService.get(`https://api.hyper.co/v4/licenses/${key}`, {
                 headers: {
@@ -75,7 +75,7 @@ export class AuthService {
      */
     async validateHyperLicense(req: Request, key: string): Promise<License> {        
         const ip = requestIp.getClientIp(<any>req);
-        const keyData = await this.getHyperKeyData(key);
+        const keyData = await this._getHyperKeyData(key);
  
         /**
          * Find existing license
@@ -155,7 +155,7 @@ export class AuthService {
 
         const msSinceLastAuth = new Date().getTime() - license.lastValidation.getTime() ;
         if (msSinceLastAuth > 1) { // 300000ms = 5min
-            const keyData = await this.getHyperKeyData(license.key);
+            const keyData = await this._getHyperKeyData(license.key);
             
             /**
              * Update the last validation date

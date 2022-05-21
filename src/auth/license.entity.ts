@@ -7,7 +7,7 @@ export class License{
         licenseId: string;
     
     @Column()
-        plan: string;
+        planId: string;
 
     @Column()
         key: string;
@@ -23,7 +23,7 @@ export class License{
 
     constructor(id: string, plan: string, key: string, lastVal: Date, ip: string, user: User, ){
         this.licenseId = id;
-        this.plan = plan;
+        this.planId = plan;
         this.key = key;
         this.lastValidation = lastVal;
         this.user = user;
