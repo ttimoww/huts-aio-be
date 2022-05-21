@@ -1,33 +1,37 @@
 // NestJS & Core
 import { Injectable, InternalServerErrorException, Logger, UnauthorizedException } from '@nestjs/common';
 import { JwtService } from '@nestjs/jwt';
+import { InjectRepository } from '@nestjs/typeorm';
 import { HttpService } from '@nestjs/axios';
 import { map } from 'rxjs/operators';
 import { lastValueFrom } from 'rxjs';
 import * as requestIp from 'request-ip';
+import { Repository } from 'typeorm';
 
 // Services
 import { UserService } from 'src/user/user.service';
 
 // Entities
-import { User } from './../user/user.entity';
+import { User } from '../user/entities/user.entity';
+import { License } from './license.entity';
 
 // Models
-import { HyperKeyData } from './models/hyper-key-data.model';
+import HyperKeyData from './models/hyper-key-data.model';
 import JwtPayload from './models/jwt-payload.model';
 
 // Exceptions
 import { InvalidKeyException } from './exceptions/invalid-key.exception';
-import { InvalidIpException } from './exceptions/invalid-ip.exception';
 
 @Injectable()
 export class AuthService {
     private logger = new Logger('AuthService');
 
     constructor(
-      private readonly userService: UserService,
-      private jwtService: JwtService,
-      private httpService: HttpService
+        @InjectRepository(License)
+        private readonly licenseRepository: Repository<License>,
+        private readonly userService: UserService,
+        private readonly jwtService: JwtService,
+        private readonly httpService: HttpService
     ){}
 
     /**
@@ -56,6 +60,7 @@ export class AuthService {
 
         } catch (error) {
             if (error.response?.status === 404){
+                this.logger.verbose(`Rejected ${key} (invalid key)`);
                 throw new InvalidKeyException();
             }
             this.logger.error('Unable to check Hyper license', error);
@@ -64,107 +69,112 @@ export class AuthService {
     }
 
     /**
-     * Checks the key and returns the corresponding User.
-     * If its the first time the User is logging in, a new User will be created.
+     * Checks the key and returns the corresponding User
+     * If its the first time the User is logging in, a new User will be created
      * @param key The Hyper key
      */
-    async validateHyperKey(req: Request, key: string): Promise<User> {
-        this.logger.verbose(`Checking ${key}...`);
+    async validateHyperLicense(req: Request, key: string): Promise<License> {        
         const ip = requestIp.getClientIp(<any>req);
         const keyData = await this.getHyperKeyData(key);
-        const user = await this.userService.findOne({ where: { licenseId: keyData.licenseId } });
+ 
+        /**
+         * Find existing license
+         */
+        const license = await this.licenseRepository.findOne({
+            where: { licenseId: keyData.licenseId },
+            relations: ['user']
+        });
 
         /**
-         * Create new User
+         * Create new license
          */
-        if (!user){
+        if (!license) {
             try {
-                const newUser = await this.userService.save(new User(
-                    key, 
-                    keyData.discordId, 
-                    keyData.discordTag, 
-                    keyData.discordImage, 
-                    new Date(), 
-                    ip,
-                    keyData.licenseId
-                ));
+                let user = await this.userService.findOne({ where: { discordId: keyData.discordId } });
+                if (!user) user = await this.userService.save(new User(keyData.discordId, keyData.discordTag, keyData.discordImage));
+    
+                const license = await this.licenseRepository.save(new License(keyData.licenseId, keyData.plan, keyData.key, new Date(), ip, user));
 
-                this.logger.verbose(`${newUser.discordTag} just logged in with a fresh license`);
-                return newUser;
+                this.logger.verbose(`${license.user.discordTag} logged in with a new license (${license.licenseId})`);
+                return license;
             } catch (error) {
-                this.logger.error(`Unable to create new User entity for ${keyData.discordTag}`, error);
-                throw new InternalServerErrorException('Unable to create new user');
+                this.logger.error('Unable to create new license', error);
+                throw new InternalServerErrorException();
             }
         }
 
         /**
-         * Check the ip address
+         * Update License
          */
-        if (ip !== user.ip) throw new InvalidIpException();
+        license.lastValidation = new Date();
+        license.key = key;
+        license.ip = ip;
+        await this.licenseRepository.save(license);
 
-        user.ip = ip;
-        user.lastAuth = new Date();
+        /**
+         * Update User
+         */
+        const { user } = license;
         user.discordId = keyData.discordId;
         user.discordTag = keyData.discordTag;
         user.discordImage = keyData.discordImage;
-        user.key = keyData.key;
-            
-        try {
-            await this.userService.save(user);
-        } catch (error) {
-            this.logger.error(`Unable to update existing user ${user.discordTag} (user will still get access)`);
-        }
+        await this.userService.save(user);
 
-        this.logger.verbose(`${user.discordTag} just logged in`);
-        return user;
+        this.logger.verbose(`${user.discordTag} logged in`);
+        return license;
     }
 
     /**
      * Creates a JWT token with payload
-     * @param user The User who logged in
-     * @returns JWT
+     * @param licence The License
      */
-    async createToken(user: User): Promise<{access_token: string}> {
-        const payload: JwtPayload = { licenseId: user.licenseId };
+    async createToken(license: License): Promise<{access_token: string}> {
+        const payload: JwtPayload = { licenseId: license.licenseId };
         return {
             access_token: this.jwtService.sign(payload),
         };
     }
 
     /**
-     * Checks if the incoming Jwt, which holds the userId & licenseId still has a valid Hyper license
+     * Checks if the incoming Jwt which holds the licenseId, it uses the attached key to check if the license is still valid
      * @param req The request
      * @param payload The Jwt Payload
      */
     async validateToken(req: Request, payload: JwtPayload): Promise<User>{
-        let userUpdated = false;
-        
         const ip = requestIp.getClientIp(<any>req);
-        const user = await this.userService.findOne({ where: { licenseId: payload.licenseId } });
 
-        if (!user) throw new UnauthorizedException();
+        /**
+         * Find existing license
+         */
+        const license = await this.licenseRepository.findOne({
+            where: { licenseId: payload.licenseId },
+            relations: ['user']
+        });
 
-        if (!user.ip){
-            user.ip = ip;
-            userUpdated = true;
-        }
-        else if (ip !== user.ip) {
-            this.logger.verbose(`Access denied for ${user.discordTag}. Inc: [${ip}] Exp: [${user.ip}]`);
-            throw new InvalidIpException();
-        }
+        if (!license) throw new UnauthorizedException();
 
-        const msSinceLastAuth = new Date().getTime() - user.lastAuth.getTime() ;
+        const msSinceLastAuth = new Date().getTime() - license.lastValidation.getTime() ;
         if (msSinceLastAuth > 1) { // 300000ms = 5min
-            const keyData = await this.getHyperKeyData(user.key);
+            const keyData = await this.getHyperKeyData(license.key);
             
-            user.lastAuth = new Date();
+            /**
+             * Update the last validation date
+             */
+            license.lastValidation = new Date();
+            license.ip = ip;
+            await this.licenseRepository.save(license);
+
+            /**
+             * Update usersettings
+             */
+            const { user } = license;
             user.discordId = keyData.discordId;
             user.discordTag = keyData.discordTag;
             user.discordImage = keyData.discordImage;
-
-            userUpdated = true;
+            return await this.userService.save(user);
+             
         }
 
-        return userUpdated ? await this.userService.save(user) : user;
+        return license.user;
     }
 }

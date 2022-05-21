@@ -13,7 +13,8 @@ import { Public } from './decorators/public.decorator';
 import { LocalAuthGuard } from './guards/local.guard';
 
 // Entities
-import { User } from 'src/user/user.entity';
+import { User } from 'src/user/entities/user.entity';
+import { License } from './license.entity';
 
 @Controller('/auth')
 export class AuthController {
@@ -26,9 +27,15 @@ export class AuthController {
   @UseGuards(LocalAuthGuard)
   @ApiBody({ type: LoginDto })
   @Post('/login')
-    async getHello(@Request() req): Promise<any> {
-        const token = await this.authService.createToken(req.user);
-        return { ...req.user, ...token };
+    async login(@Request() req): Promise<User> {
+        /**
+         * Note that req.user isn't actually a User here but an License
+         * We do this so we can store the licenseId in the JWT payload (see local.strategy.ts)
+         */
+        const license = req.user as License;
+
+        const token = await this.authService.createToken(license);
+        return { ...license.user, ...token };
     }
 
   @ApiBearerAuth()
