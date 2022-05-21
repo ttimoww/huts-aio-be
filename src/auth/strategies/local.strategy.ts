@@ -2,18 +2,21 @@ import { Strategy } from 'passport-local';
 import { PassportStrategy } from '@nestjs/passport';
 import { Injectable, Logger } from '@nestjs/common';
 import { AuthService } from '../auth.service';
-import { User } from 'src/user/user.entity';
-
+import { License } from '../license.entity';
 
 @Injectable()
 export class LocalStrategy extends PassportStrategy(Strategy) {
     private logger = new Logger('LocalStrategy');
 
     constructor(private readonly authService: AuthService) {
-        super({ usernameField: 'key', passwordField: 'key', passReqToCallback: true });
+        super({ 
+            usernameField: 'key', 
+            passwordField: 'key', 
+            passReqToCallback: true
+        });
     }
 
-    async validate(req: Request, key: string): Promise<User> {
-        return await this.authService.validateHyperKey(req, key);
+    async validate(req: Request, key: string): Promise<License> {
+        return await this.authService.validateHyperLicense(req, key);
     }
 }

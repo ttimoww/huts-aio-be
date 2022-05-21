@@ -1,6 +1,6 @@
 import { Entity, PrimaryGeneratedColumn, Column, OneToMany } from 'typeorm';
 import { Checkout } from 'src/checkout/checkout.entity';
-import { License } from './license.entity';
+import { License } from '../../auth/license.entity';
 
 @Entity()
 export class User{
@@ -10,14 +10,11 @@ export class User{
     @Column()
         discordId: string;
 
-    @Column()
+    @Column({ unique: true })
         discordTag: string;
     
     @Column()
         discordImage: string;
-    
-    @Column({ nullable: true })
-        ip: string;
 
     @OneToMany(() => License, license => license.user)
         licenses: License[];
@@ -29,6 +26,5 @@ export class User{
         this.discordId = discordId;
         this.discordTag = discordTag;
         this.discordImage = discordImage;
-        this.ip = 'REMOVE?';
     }
 }

@@ -8,4 +8,6 @@ module.exports = {
     synchronize: process.env.NODE_ENV === 'development',
     ssl: process.env.NODE_ENV === 'production' ? { rejectUnauthorized: true, ca: process.env.CA_CERT } : false,
     entities: ['dist/**/*.entity{.ts,.js}'],
+    migrations: ['migrations/*{.ts,.js}'],
+    cli: { migrationsDir: 'migrations' }
 };
