@@ -9,13 +9,13 @@ export class CheckoutDto  {
     
     @ApiProperty()
     @IsString()
-        name: string;
+        productName: string;
     
     @IsString()
     @ApiProperty()
-        size: string;
+        productSize: string;
     
     @IsString()
     @ApiProperty()
-        image: string;
+        productImage: string;
 }
