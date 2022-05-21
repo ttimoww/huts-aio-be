@@ -1,6 +1,6 @@
 // NestJS
 import { Controller, Post, UseGuards, Request, Get } from '@nestjs/common';
-import { ApiBearerAuth, ApiBody, ApiOkResponse } from '@nestjs/swagger';
+import { ApiBearerAuth, ApiBody, ApiOkResponse, ApiTags } from '@nestjs/swagger';
 
 // Services
 import { AuthService } from './auth.service';
@@ -21,6 +21,7 @@ import { UserDto } from './dto/user.dto';
 import { UserTokenDto } from './dto/user-token.dto';
 
 @Controller('/auth')
+@ApiTags('auth')
 export class AuthController {
 
     constructor(
