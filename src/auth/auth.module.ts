@@ -3,7 +3,7 @@ import { Module } from '@nestjs/common';
 import { PassportModule } from '@nestjs/passport';
 import { HttpModule } from '@nestjs/axios';
 import { TypeOrmModule } from '@nestjs/typeorm';
-
+import { APP_GUARD } from '@nestjs/core';
 
 // Constants
 import { jwtConstants } from './constants';
@@ -22,7 +22,8 @@ import { AuthController } from './auth.controller';
 
 // Services
 import { AuthService } from './auth.service';
-import { APP_GUARD } from '@nestjs/core';
+
+// Entities
 import { License } from './license.entity';
 
 @Module({

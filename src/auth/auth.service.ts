@@ -1,27 +1,26 @@
 // NestJS & Core
 import { Injectable, InternalServerErrorException, Logger, UnauthorizedException } from '@nestjs/common';
 import { JwtService } from '@nestjs/jwt';
+import { InjectRepository } from '@nestjs/typeorm';
 import { HttpService } from '@nestjs/axios';
 import { map } from 'rxjs/operators';
 import { lastValueFrom } from 'rxjs';
 import * as requestIp from 'request-ip';
+import { Repository } from 'typeorm';
 
 // Services
 import { UserService } from 'src/user/user.service';
 
 // Entities
 import { User } from '../user/entities/user.entity';
+import { License } from './license.entity';
 
 // Models
-import { HyperKeyData } from './models/hyper-key-data.model';
+import HyperKeyData from './models/hyper-key-data.model';
 import JwtPayload from './models/jwt-payload.model';
 
 // Exceptions
 import { InvalidKeyException } from './exceptions/invalid-key.exception';
-import { InvalidIpException } from './exceptions/invalid-ip.exception';
-import { InjectRepository } from '@nestjs/typeorm';
-import { Repository } from 'typeorm';
-import { License } from './license.entity';
 
 @Injectable()
 export class AuthService {
@@ -70,13 +69,11 @@ export class AuthService {
     }
 
     /**
-     * Checks the key and returns the corresponding User.
-     * If its the first time the User is logging in, a new User will be created.
+     * Checks the key and returns the corresponding User
+     * If its the first time the User is logging in, a new User will be created
      * @param key The Hyper key
      */
-    async validateHyperLicense(req: Request, key: string): Promise<License> {
-        this.logger.verbose(`Validating ${key}...`);
-        
+    async validateHyperLicense(req: Request, key: string): Promise<License> {        
         const ip = requestIp.getClientIp(<any>req);
         const keyData = await this.getHyperKeyData(key);
  
@@ -129,6 +126,7 @@ export class AuthService {
 
     /**
      * Creates a JWT token with payload
+     * @param licence The License
      */
     async createToken(license: License): Promise<{access_token: string}> {
         const payload: JwtPayload = { licenseId: license.licenseId };
@@ -138,7 +136,7 @@ export class AuthService {
     }
 
     /**
-     * Checks if the incoming Jwt, which holds the userId & licenseId still has a valid Hyper license
+     * Checks if the incoming Jwt which holds the licenseId, it uses the attached key to check if the license is still valid
      * @param req The request
      * @param payload The Jwt Payload
      */

@@ -15,8 +15,8 @@ export class License{
     @Column()
         lastValidation: Date;
 
-        @Column({ nullable: true })
-            ip: string;
+    @Column({ nullable: true })
+        ip: string;
     
     @ManyToOne(() => User, user => user.licenses)
         user: User;

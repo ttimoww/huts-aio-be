@@ -27,14 +27,13 @@ export class AuthController {
   @UseGuards(LocalAuthGuard)
   @ApiBody({ type: LoginDto })
   @Post('/login')
-    async getHello(@Request() req): Promise<any> {
+    async login(@Request() req): Promise<User> {
         /**
          * Note that req.user isn't actually a User here but an License
-         * We do this so we can store the licenseId in the JWT payload
-         * See the return type in local.strategy
+         * We do this so we can store the licenseId in the JWT payload (see local.strategy.ts)
          */
         const license = req.user as License;
-        
+
         const token = await this.authService.createToken(license);
         return { ...license.user, ...token };
     }

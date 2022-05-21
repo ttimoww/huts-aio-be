@@ -1,4 +1,4 @@
-export class HyperKeyData{
+export default class HyperKeyData{
     discordTag: string;
     discordId: string;
     discordImage: string;
