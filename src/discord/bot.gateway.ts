@@ -1,7 +1,7 @@
 import { Injectable, Logger } from '@nestjs/common';
 import { On, Once, InjectDiscordClient, UseGuards } from '@discord-nestjs/core';
 import { Client, Message } from 'discord.js';
-import { StaffOnlyGuard } from './guards/staff-only.guard';
+import { SuccessChannelGuard } from './guards/success-channel.guard';
 
 @Injectable()
 export class BotGateway {
@@ -12,16 +12,16 @@ export class BotGateway {
         private readonly client: Client,
     ) {}
 
-  @Once('ready')
+    @Once('ready')
     onReady() {
         this.logger.log(`Bot ${this.client.user.tag} was started!`);
     }
-  
-    @UseGuards(StaffOnlyGuard)
+
+    @UseGuards(SuccessChannelGuard)
     @On('messageCreate')
-  async onMessage(message: Message): Promise<void> {
-      if (!message.author.bot) {
-          await message.reply('I\'m watching you');
-      }
-  }
+    async onMessage(message: Message): Promise<void> {
+        if (!message.author.bot) {
+            await message.reply('I\'m watching you');
+        }
+    }
 }

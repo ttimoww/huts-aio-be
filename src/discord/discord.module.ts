@@ -12,7 +12,7 @@ import { LeaderboardCommand } from './commands/leaderboard.command';
     imports: [
         DiscModule.forRootAsync({
             useFactory: () => ({
-                token: process.env.BOT_TOKEN,
+                token: process.env.DISC_BOT_TOKEN,
                 discordClientOptions: {
                     intents: [Intents.FLAGS.GUILDS, Intents.FLAGS.GUILD_MESSAGES],
                 },
