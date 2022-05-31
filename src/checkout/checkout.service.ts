@@ -1,5 +1,5 @@
 // NestJS
-import { ForbiddenException, Injectable, NotFoundException } from '@nestjs/common';
+import { ForbiddenException, Injectable, Logger, NotFoundException } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 
@@ -8,17 +8,20 @@ import { User } from 'src/user/entities/user.entity';
 import { Checkout } from './checkout.entity';
 
 // Dto's
-import { UserService } from 'src/user/user.service';
 import { CheckoutDto } from './checkout.dto';
 import { ResultDto } from 'src/lib/dto/result.dto';
 
+// Service
+import { WebhookService } from 'src/discord/webhook.service';
+
 @Injectable()
 export class CheckoutService {
+    private logger = new Logger('CheckoutService');
 
     constructor(
         @InjectRepository(Checkout)
         private readonly checkoutRepository: Repository<Checkout>,
-        private readonly userService: UserService
+        private readonly webhookService: WebhookService
     ){}
 
     /**
@@ -32,7 +35,8 @@ export class CheckoutService {
             store: checkout.store,
             productName: checkout.productName,
             productSize: checkout.productSize,
-            productImage: checkout.productImage
+            productImage: checkout.productImage,
+            productPrice: checkout.productPrice
         }));
     }
 
@@ -43,18 +47,23 @@ export class CheckoutService {
      * @returns The saved checkout
      */
     async createCheckout(user: User, body: CheckoutDto): Promise<CheckoutDto>{
+        this.logger.verbose(`${user.discordTag} checked out a product`);
         const checkout = await this.checkoutRepository.save(new Checkout(
             body.store, 
             body.productName, 
             body.productSize, 
-            body.productImage, 
+            body.productImage,
+            body.productPrice,
             user
         ));
-
+            
+        this.webhookService.send(user, body);
+            
         return {
             store: checkout.store,
             productName: checkout.productName,
             productSize: checkout.productSize,
+            productPrice: checkout.productPrice,
             productImage: checkout.productImage,
         };
     }

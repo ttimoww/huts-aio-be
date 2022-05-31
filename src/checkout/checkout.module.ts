@@ -4,11 +4,13 @@ import { CheckoutController } from './checkout.controller';
 import { Checkout } from './checkout.entity';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { UserModule } from 'src/user/user.module';
+import { DiscordModule } from 'src/discord/discord.module';
 
 @Module({
     imports: [
         TypeOrmModule.forFeature([Checkout]),
-        UserModule
+        UserModule,
+        DiscordModule
     ],
     providers: [CheckoutService],
     controllers: [CheckoutController]
