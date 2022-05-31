@@ -1,4 +1,5 @@
 import { Module } from '@nestjs/common';
+import { TypeOrmModule } from '@nestjs/typeorm';
 import { DiscordModule as DiscModule } from '@discord-nestjs/core';
 import { Intents } from 'discord.js';
 
@@ -7,6 +8,15 @@ import { BotGateway } from './bot.gateway';
 
 // Commands
 import { LeaderboardCommand } from './commands/leaderboard.command';
+
+// Controllers
+import { WebhookController } from './webhook.controller';
+
+// Services
+import { WebhookService } from './webhook.service';
+
+// Entities
+import { Webhook } from './entities/webhook.entity';
 
 @Module({
     imports: [
@@ -18,7 +28,9 @@ import { LeaderboardCommand } from './commands/leaderboard.command';
                 },
             }),
         }),
+        TypeOrmModule.forFeature([Webhook])
     ],
-    providers: [LeaderboardCommand, BotGateway]
+    providers: [LeaderboardCommand, BotGateway, WebhookService],
+    controllers: [WebhookController]
 })
 export class DiscordModule {}
