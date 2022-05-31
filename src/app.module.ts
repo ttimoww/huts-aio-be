@@ -7,13 +7,15 @@ import { AuthModule } from './auth/auth.module';
 
 // Entities
 import { CheckoutModule } from './checkout/checkout.module';
+import { DiscordModule } from './discord/discord.module';
 
 @Module({
     imports: [
         TypeOrmModule.forRoot(),
         AuthModule,
         UserModule,
-        CheckoutModule
+        CheckoutModule,
+        DiscordModule
     ],
     controllers: [],
     providers: [],
