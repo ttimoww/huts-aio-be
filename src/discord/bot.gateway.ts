@@ -9,19 +9,19 @@ export class BotGateway {
 
     constructor(
         @InjectDiscordClient()
-        private readonly client: Client,
+        private readonly discordClient: Client,
     ) {}
 
     @Once('ready')
     onReady() {
-        this.logger.log(`Bot ${this.client.user.tag} was started!`);
+        this.logger.log(`Bot ${this.discordClient.user.tag} was started!`);
     }
 
     @UseGuards(SuccessChannelGuard)
     @On('messageCreate')
     async onMessage(message: Message): Promise<void> {
         if (!message.author.bot) {
-            await message.reply('I\'m watching you');
+            await message.reply('TODO -> HANDLE SUCCESS POST');
         }
     }
 }

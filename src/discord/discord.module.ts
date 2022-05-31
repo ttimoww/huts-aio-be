@@ -31,6 +31,7 @@ import { Webhook } from './entities/webhook.entity';
         TypeOrmModule.forFeature([Webhook])
     ],
     providers: [LeaderboardCommand, BotGateway, WebhookService],
+    exports: [WebhookService],
     controllers: [WebhookController]
 })
 export class DiscordModule {}

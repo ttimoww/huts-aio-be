@@ -1,7 +1,6 @@
 // NestJS
-import { Body, Controller, Post, Get, Request, Delete, Param, NotFoundException } from '@nestjs/common';
+import { Body, Controller, Post, Get, Request, Delete, NotFoundException } from '@nestjs/common';
 import { ApiBearerAuth, ApiBody, ApiOkResponse, ApiTags } from '@nestjs/swagger';
-// import { Request } from 'express'
 
 // Dto's
 import { ResultDto } from 'src/lib/dto/result.dto';
@@ -10,8 +9,6 @@ import { WebhookDto } from './dto/webhook.dto';
 // Interfaces
 import { IRequestWithUser } from 'src/lib/interfaces/request-with-user.interface';
 import { WebhookService } from './webhook.service';
-
-// Services
 
 @Controller('webhook')
 @ApiTags('webhook')
