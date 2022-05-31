@@ -1,5 +1,5 @@
-import { ApiProperty } from '@nestjs/swagger';
-import { IsEnum, IsString } from 'class-validator';
+import { ApiProperty, ApiPropertyOptional } from '@nestjs/swagger';
+import { IsEnum, IsOptional, IsString } from 'class-validator';
 import { Store } from 'src/lib/enums/store.enum';
 
 export class CheckoutDto  {
@@ -18,4 +18,28 @@ export class CheckoutDto  {
     @IsString()
     @ApiProperty()
         productImage: string;
+
+    @IsString()
+    @ApiProperty()
+        productPrice: string;
+
+    @IsString()
+    @ApiPropertyOptional()
+    @IsOptional()
+        productUrl?: string;
+
+    @IsString()
+    @ApiPropertyOptional()
+    @IsOptional()
+        paymentUrl?: string;
+
+    @IsString()
+    @ApiPropertyOptional()
+    @IsOptional()
+        orderId?: string;
+
+    @IsString()
+    @ApiPropertyOptional()
+    @IsOptional()
+        account?: string;
 }
