@@ -48,6 +48,17 @@ export class CheckoutService {
      */
     async createCheckout(user: User, body: CheckoutDto): Promise<CheckoutDto>{
         this.logger.verbose(`${user.discordTag} checked out a product`);
+
+        /**
+         * Check the Product Image
+         * When the URL is invalid, add the websites logo
+         */
+        // eslint-disable-next-line no-useless-escape
+        const urlRegex = new RegExp(/(http(s)?:\/\/.)?(www\.)?[-a-zA-Z0-9@:%._\+~#=]{2,256}\.[a-z]{2,6}\b([-a-zA-Z0-9@:%_\+.~#?&//=]*)/g, '');
+        if (!body.productImage.match(urlRegex)){
+            body.productImage = 'https://i.imgur.com/0bdaOjE.png';
+        }
+
         const checkout = await this.checkoutRepository.save(new Checkout(
             body.store, 
             body.productName, 

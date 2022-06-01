@@ -58,7 +58,7 @@ export class WebhookService {
      */
     private async sendPublicWebhook(user: User, checkout: CheckoutDto): Promise<void>{
         try {
-            const channel = this.discordClient.channels.cache.get(process.env.DISC_SUCCESS_POST_CHANNEL_ID) as TextChannel;
+            const channel = this.discordClient.channels.cache.get(process.env.DISC_PUBLIC_SUCCESS_CHANNEL) as TextChannel;
             const embed = new MessageEmbed()
                 .setColor('#6366F1')
                 .setTitle('HutsAIO delivered 🥶')
@@ -67,7 +67,7 @@ export class WebhookService {
                     { name: 'Product', value: checkout.productUrl ? `[${checkout.productName}](${checkout.productUrl})` : checkout.productName, inline: true },
                     { name: 'Size', value: checkout.productSize, inline: true },
                     { name: 'Price', value: checkout.productPrice, inline: true },
-                    { name: 'Store', value: checkout.store, inline: true },
+                    { name: 'Store', value: checkout.store.charAt(0).toUpperCase() + checkout.store.slice(1), inline: true },
                     { name: 'User', value: user.discordTag, inline: true },
                 )
                 .setTimestamp()
@@ -99,7 +99,7 @@ export class WebhookService {
                     { name: 'Product', value: checkout.productUrl ? `[${checkout.productName}](${checkout.productUrl})` : checkout.productName, inline: true },
                     { name: 'Size', value: checkout.productSize, inline: true },
                     { name: 'Price', value: checkout.productPrice, inline: true },
-                    { name: 'Store', value: checkout.store, inline: true },
+                    { name: 'Store', value: checkout.store.charAt(0).toUpperCase() + checkout.store.slice(1), inline: true },
                 )
                 .setTimestamp()
                 .setFooter({ text: 'HutsAIO', iconURL: 'https://i.imgur.com/cXu8bLX.png' });
