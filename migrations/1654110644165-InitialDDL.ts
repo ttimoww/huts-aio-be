@@ -1,7 +1,7 @@
 import {MigrationInterface, QueryRunner} from "typeorm";
 
-export class InitialDDL1654109945817 implements MigrationInterface {
-    name = 'InitialDDL1654109945817'
+export class InitialDDL1654110644165 implements MigrationInterface {
+    name = 'InitialDDL1654110644165'
 
     public async up(queryRunner: QueryRunner): Promise<void> {
         await queryRunner.query(`CREATE TYPE "public"."checkout_store_enum" AS ENUM('zalando', 'snipes', 'solebox')`);
