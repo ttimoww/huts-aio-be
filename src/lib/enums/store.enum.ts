@@ -1,5 +1,8 @@
 export enum Store{
     Zalando = 'zalando',
     Snipes = 'snipes',
-    Solebox = 'solebox'
+    Solebox = 'solebox',
+    LVR = 'lvr',
+    Kith = 'kith',
+    Supreme = 'supreme',
 }

@@ -13,6 +13,7 @@ import { ResultDto } from 'src/lib/dto/result.dto';
 
 // Service
 import { WebhookService } from 'src/discord/webhook.service';
+import { Store } from 'src/lib/enums/store.enum';
 
 @Injectable()
 export class CheckoutService {
@@ -56,7 +57,12 @@ export class CheckoutService {
         // eslint-disable-next-line no-useless-escape
         const urlRegex = new RegExp(/(http(s)?:\/\/.)?(www\.)?[-a-zA-Z0-9@:%._\+~#=]{2,256}\.[a-z]{2,6}\b([-a-zA-Z0-9@:%_\+.~#?&//=]*)/g, '');
         if (!body.productImage.match(urlRegex)){
-            body.productImage = 'https://i.imgur.com/0bdaOjE.png';
+            if (body.store === Store.Solebox) body.productImage = 'https://i.imgur.com/0bdaOjE.png';
+            else if (body.store === Store.Snipes) body.productImage = 'https://i.imgur.com/PPBtTL0.jpeg';
+            else if (body.store === Store.Zalando) body.productImage = 'https://i.imgur.com/JJd4MoM.jpeg';
+            else if (body.store === Store.LVR) body.productImage = 'https://www.wsj.com/coupons/static/shop/37360/logo/luisa_via_roma_promo_code.png';
+            else if (body.store === Store.Supreme) body.productImage = 'https://i.imgur.com/FDdtFlt.jpeg';
+            else body.productImage = 'https://i.imgur.com/cXu8bLX.png';
         }
 
         const checkout = await this.checkoutRepository.save(new Checkout(

@@ -1,5 +1,6 @@
 import { Module } from '@nestjs/common';
 import { TypeOrmModule } from '@nestjs/typeorm';
+import { ThrottlerGuard, ThrottlerModule } from '@nestjs/throttler';
 
 // Modules
 import { UserModule } from './user/user.module';
@@ -8,6 +9,7 @@ import { AuthModule } from './auth/auth.module';
 // Entities
 import { CheckoutModule } from './checkout/checkout.module';
 import { DiscordModule } from './discord/discord.module';
+import { APP_GUARD } from '@nestjs/core';
 
 @Module({
     imports: [
@@ -15,10 +17,19 @@ import { DiscordModule } from './discord/discord.module';
         AuthModule,
         UserModule,
         CheckoutModule,
-        DiscordModule
+        DiscordModule,
+        ThrottlerModule.forRoot({
+            ttl: 60,
+            limit: 30,
+        }),
     ],
     controllers: [],
-    providers: [],
+    providers: [
+        {
+            provide: APP_GUARD,
+            useClass: ThrottlerGuard
+        }
+    ],
 })
 
 export class AppModule {}
