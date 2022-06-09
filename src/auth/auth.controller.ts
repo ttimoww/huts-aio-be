@@ -18,7 +18,6 @@ import { UserTokenDto } from './dto/user-token.dto';
 
 // Interfaces
 import { IRequestWithLicense } from './../lib/interfaces/request-with-license.interface';
-import { IRequestWithUser } from './../lib/interfaces/request-with-user.interface';
 import { ResultDto } from 'src/lib/dto/result.dto';
 
 @Controller('/auth')
