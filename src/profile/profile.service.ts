@@ -85,7 +85,7 @@ export class ProfileService {
     }
     
     /**
-     * Delete a checkout
+     * Delete a profile
      * @param user The user
      * @param id The profile to delete
      * @returns Wheter the deletion succeeded or not
@@ -96,7 +96,7 @@ export class ProfileService {
             relations: ['user']
         });
 
-        if (!profile) throw new NotFoundException(`No checkout with id ${id}`);
+        if (!profile) throw new NotFoundException(`No profile with id ${id}`);
 
         if (profile.user?.userId !== user.userId) throw new ForbiddenException();
 
