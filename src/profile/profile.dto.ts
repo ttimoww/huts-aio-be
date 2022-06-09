@@ -1,6 +1,5 @@
 import { ApiProperty, ApiPropertyOptional } from '@nestjs/swagger';
-import { IsEnum, IsNotEmpty, IsOptional, IsString } from 'class-validator';
-import { Store } from 'src/lib/enums/store.enum';
+import { IsNotEmpty, IsOptional, IsString } from 'class-validator';
 
 export class ProfileDto{
     @ApiProperty()

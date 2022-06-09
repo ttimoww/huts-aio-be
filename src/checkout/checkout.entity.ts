@@ -1,6 +1,7 @@
 import { Entity, PrimaryGeneratedColumn, Column, ManyToOne } from 'typeorm';
 import { Store } from './../lib/enums/store.enum';
 import { User } from './../user/entities/user.entity';
+import { CheckoutDto } from './checkout.dto';
 
 @Entity()
 export class Checkout{
@@ -25,12 +26,14 @@ export class Checkout{
     @ManyToOne(() => User, user => user.checkouts)
         user: User;
 
-    constructor(store: Store, name: string, size: string, image: string, price: string, user: User) {
-        this.store = store;
-        this.productName = name;
-        this.productSize = size;
-        this.productImage = image;
-        this.productPrice = price;
+    constructor(dto: CheckoutDto, user: User) {
+        if (dto === undefined || user === undefined) return;
+
+        this.store = dto.store;
+        this.productName = dto.productName;
+        this.productSize = dto.productSize;
+        this.productImage = dto.productImage;
+        this.productPrice = dto.productPrice;
         this.user = user;
     }
 }
