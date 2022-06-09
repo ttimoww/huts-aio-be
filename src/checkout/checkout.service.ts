@@ -32,13 +32,7 @@ export class CheckoutService {
      */
     async getCheckouts(user: User): Promise<CheckoutDto[]>{
         const checkouts = await this.checkoutRepository.find({ where: { user: user } });
-        return checkouts.map(checkout => ({
-            store: checkout.store,
-            productName: checkout.productName,
-            productSize: checkout.productSize,
-            productImage: checkout.productImage,
-            productPrice: checkout.productPrice
-        }));
+        return checkouts.map(checkout => checkout);
     }
 
     /**
@@ -65,24 +59,11 @@ export class CheckoutService {
             else body.productImage = 'https://i.imgur.com/cXu8bLX.png';
         }
 
-        const checkout = await this.checkoutRepository.save(new Checkout(
-            body.store, 
-            body.productName, 
-            body.productSize, 
-            body.productImage,
-            body.productPrice,
-            user
-        ));
+        const checkout = await this.checkoutRepository.save(new Checkout(body, user));
             
         this.webhookService.send(user, body);
             
-        return {
-            store: checkout.store,
-            productName: checkout.productName,
-            productSize: checkout.productSize,
-            productPrice: checkout.productPrice,
-            productImage: checkout.productImage,
-        };
+        return checkout;
     }
     
     /**
