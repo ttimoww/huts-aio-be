@@ -2,6 +2,7 @@ import { Checkout } from './../../checkout/checkout.entity';
 import { Entity, PrimaryGeneratedColumn, Column, OneToMany, OneToOne } from 'typeorm';
 import { License } from '../../auth/license.entity';
 import { Webhook } from 'src/discord/entities/webhook.entity';
+import { Profile } from 'src/profile/profile.entity';
 
 @Entity()
 export class User{
@@ -22,6 +23,9 @@ export class User{
 
     @OneToMany(() => Checkout, checkout => checkout.user)
         checkouts: Checkout[];
+
+    @OneToMany(() => Profile, profile => profile.user)
+        profiles: Profile[];
     
     @OneToOne(() => Webhook, webhook => webhook.user)
         webhook: Webhook;

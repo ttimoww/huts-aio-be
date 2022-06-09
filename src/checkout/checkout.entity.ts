@@ -25,7 +25,6 @@ export class Checkout{
     @ManyToOne(() => User, user => user.checkouts)
         user: User;
 
-
     constructor(store: Store, name: string, size: string, image: string, price: string, user: User) {
         this.store = store;
         this.productName = name;
