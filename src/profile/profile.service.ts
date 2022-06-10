@@ -67,6 +67,8 @@ export class ProfileService {
         try {
             delete profile.profileId;
 
+            profile.profileName = `Copy of ${profile.profileName}`;
+
             const newProfile = await this.profileRepository.save(profile);
             this.logger.verbose(`${user.discordTag} duplicated a profile (${newProfile.profileId})`);
             
