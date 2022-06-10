@@ -1,5 +1,5 @@
-import { ApiProperty, ApiPropertyOptional } from '@nestjs/swagger';
-import { IsNotEmpty, IsOptional, IsString } from 'class-validator';
+import { ApiProperty } from '@nestjs/swagger';
+import { IsEmail, IsNotEmpty, IsString } from 'class-validator';
 
 export class ProfileDto{
     @ApiProperty()
@@ -11,6 +11,7 @@ export class ProfileDto{
     @ApiProperty()
     @IsString()
     @IsNotEmpty()
+    @IsEmail()
         email: string;
     
     @ApiProperty()
@@ -30,10 +31,7 @@ export class ProfileDto{
 
     @ApiProperty()
     @IsString()
-    @IsNotEmpty()
-    @ApiPropertyOptional()
-    @IsOptional()
-        addressLineTwo?: string;
+        addressLineTwo: string;
 
     @ApiProperty()
     @IsString()

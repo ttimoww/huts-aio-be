@@ -22,8 +22,8 @@ export class Profile{
     @Column()
         addressLineOne: string;
 
-    @Column({ nullable: true })
-        addressLineTwo?: string;
+    @Column()
+        addressLineTwo: string;
 
     @Column()
         houseNumber: string;
