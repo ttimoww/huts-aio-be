@@ -4,7 +4,7 @@ import { DiscordModule as DiscModule } from '@discord-nestjs/core';
 import { Intents } from 'discord.js';
 
 // Gateways
-import { BotGateway } from './bot.gateway';
+import { SuccessGateway } from './success.gateway';
 
 // Commands
 import { LeaderboardCommand } from './commands/leaderboard.command';
@@ -14,6 +14,7 @@ import { WebhookController } from './webhook.controller';
 
 // Services
 import { WebhookService } from './webhook.service';
+import { SuccessService } from './success.service';
 
 // Entities
 import { Webhook } from './entities/webhook.entity';
@@ -30,7 +31,7 @@ import { Webhook } from './entities/webhook.entity';
         }),
         TypeOrmModule.forFeature([Webhook])
     ],
-    providers: [LeaderboardCommand, BotGateway, WebhookService],
+    providers: [LeaderboardCommand, SuccessGateway, WebhookService, SuccessService],
     exports: [WebhookService],
     controllers: [WebhookController]
 })
