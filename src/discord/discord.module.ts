@@ -19,6 +19,9 @@ import { SuccessService } from './success.service';
 // Entities
 import { Webhook } from './entities/webhook.entity';
 
+// Twitter
+import Twit = require('twit')
+
 @Module({
     imports: [
         DiscModule.forRootAsync({
@@ -31,7 +34,20 @@ import { Webhook } from './entities/webhook.entity';
         }),
         TypeOrmModule.forFeature([Webhook])
     ],
-    providers: [LeaderboardCommand, SuccessGateway, WebhookService, SuccessService],
+    providers: [{
+        provide: SuccessService,
+        useFactory: () => {
+            return new SuccessService(
+                new Twit({
+                    consumer_key: process.env.TWITTER_CONSUMER_KEY,
+                    consumer_secret: process.env.TWITTER_CONSUMER_SECRET,
+                    access_token: process.env.TWITTER_ACCESS_TOKEN,
+                    access_token_secret: process.env.TWITTER_TOKEN_SECRET
+                })
+            );
+        }
+    },
+    LeaderboardCommand, SuccessGateway, WebhookService],
     exports: [WebhookService],
     controllers: [WebhookController]
 })
