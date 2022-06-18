@@ -1,5 +1,5 @@
 // NestJS
-import { ForbiddenException, Injectable, Logger, NotFoundException } from '@nestjs/common';
+import { ForbiddenException, Injectable, InternalServerErrorException, Logger, NotFoundException } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 
@@ -61,9 +61,14 @@ export class CheckoutService {
         // LVR CDN Blocks Discord, so we'll always show the logo for now
         if (body.store === Store.LVR) body.productImage = 'https://www.wsj.com/coupons/static/shop/37360/logo/luisa_via_roma_promo_code.png';
 
-        const checkout = await this.checkoutRepository.save(new Checkout(body, user));            
         this.webhookService.send(user, body);
-        return checkout;
+        try {
+            const checkout = await this.checkoutRepository.save(new Checkout(body, user));   
+            return checkout;
+        } catch (err) {
+            this.logger.error('Failed to save new checkout', err);
+            throw new InternalServerErrorException();
+        }         
     }
     
     /**
