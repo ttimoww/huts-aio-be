@@ -17,6 +17,9 @@ export class User{
     
     @Column()
         discordImage: string;
+    
+    @Column({ default: 0 })
+        successPoints: number;
 
     @OneToMany(() => License, license => license.user)
         licenses: License[];

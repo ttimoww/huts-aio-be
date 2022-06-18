@@ -1,5 +1,5 @@
 // NestJS
-import { ForbiddenException, Injectable, Logger, NotFoundException } from '@nestjs/common';
+import { ForbiddenException, Injectable, InternalServerErrorException, Logger, NotFoundException } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 
@@ -49,21 +49,26 @@ export class CheckoutService {
          * When the URL is invalid, add the websites logo
          */
         // eslint-disable-next-line no-useless-escape
-        const urlRegex = new RegExp(/(http(s)?:\/\/.)?(www\.)?[-a-zA-Z0-9@:%._\+~#=]{2,256}\.[a-z]{2,6}\b([-a-zA-Z0-9@:%_\+.~#?&//=]*)/g, '');
+        const urlRegex = new RegExp(/^https?:\/\/.*\/.*\.(png|gif|webp|jpeg|jpg|PNG|GIF|WEBP|JPEG|JPG)\??.*$/, '');
         if (!body.productImage.match(urlRegex)){
             if (body.store === Store.Solebox) body.productImage = 'https://i.imgur.com/0bdaOjE.png';
             else if (body.store === Store.Snipes) body.productImage = 'https://i.imgur.com/PPBtTL0.jpeg';
             else if (body.store === Store.Zalando) body.productImage = 'https://i.imgur.com/JJd4MoM.jpeg';
-            else if (body.store === Store.LVR) body.productImage = 'https://www.wsj.com/coupons/static/shop/37360/logo/luisa_via_roma_promo_code.png';
             else if (body.store === Store.Supreme) body.productImage = 'https://i.imgur.com/FDdtFlt.jpeg';
             else body.productImage = 'https://i.imgur.com/cXu8bLX.png';
         }
 
-        const checkout = await this.checkoutRepository.save(new Checkout(body, user));
-            
+        // LVR CDN Blocks Discord, so we'll always show the logo for now
+        if (body.store === Store.LVR) body.productImage = 'https://www.wsj.com/coupons/static/shop/37360/logo/luisa_via_roma_promo_code.png';
+
         this.webhookService.send(user, body);
-            
-        return checkout;
+        try {
+            const checkout = await this.checkoutRepository.save(new Checkout(body, user));   
+            return checkout;
+        } catch (err) {
+            this.logger.error('Failed to save new checkout', err);
+            throw new InternalServerErrorException();
+        }         
     }
     
     /**

@@ -105,7 +105,7 @@ export class WebhookService {
                 .setFooter({ text: 'HutsAIO', iconURL: 'https://i.imgur.com/cXu8bLX.png' });
 
             if (checkout.orderId) embed.addField('Order ID', checkout.orderId, true);
-            if (checkout.account) embed.addField('Account', `||${checkout.orderId}||`, true);
+            if (checkout.account) embed.addField('Account', `||${checkout.account}||`, true);
             if (checkout.paymentUrl) embed.addField('Payment URL', `[Click](${checkout.paymentUrl})`);
 
             webhookClient.send({ embeds: [embed] });

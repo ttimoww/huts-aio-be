@@ -22,8 +22,8 @@ export class Profile{
     @Column()
         addressLineOne: string;
 
-    @Column({ nullable: true })
-        addressLineTwo?: string;
+    @Column()
+        addressLineTwo: string;
 
     @Column()
         houseNumber: string;
@@ -51,8 +51,8 @@ export class Profile{
         
         this.profileName = dto.profileName;
         this.email = dto.email;
-        this.firstName = dto.email;
-        this.lastName = dto.email;
+        this.firstName = dto.firstName;
+        this.lastName = dto.lastName;
         this.addressLineOne = dto.addressLineOne;
         this.addressLineTwo = dto.addressLineTwo;
         this.houseNumber = dto.houseNumber;

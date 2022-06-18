@@ -40,7 +40,12 @@ export class ProfileController {
     @ApiOkResponse({ type: ProfileDto })
     async updateProfile(@Request() req: IRequestWithUser, @Param('id') id: number, @Body() body: ProfileDto): Promise<ProfileDto> {
         return await this.profileService.updateProfile(req.user, id, body);
+    }
 
+    @Get('/duplicate/:id')
+    @ApiOkResponse({ type: ProfileDto })
+    async duplicateProfile(@Request() req: IRequestWithUser, @Param('id') id: number): Promise<ProfileDto> {
+        return await this.profileService.duplicateProfile(req.user, id);
     }
 
     @Delete(':id')

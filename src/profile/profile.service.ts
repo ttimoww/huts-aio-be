@@ -50,6 +50,37 @@ export class ProfileService {
     }
 
     /**
+     * Duplicate a profile
+     * @param user The user
+     * @param id The profile to duplicate
+     * @returns The saved profile
+     */
+    async duplicateProfile(user: User, id: number): Promise<ProfileDto>{
+        const profile = await this.profileRepository.findOne({ 
+            where: { profileId: id },
+            relations: ['user']
+        });
+
+        if (!profile) throw new NotFoundException(`No profile with id ${id}`);
+        if (profile.user?.userId !== user.userId) throw new ForbiddenException();
+
+        try {
+            delete profile.profileId;
+
+            profile.profileName = `Copy of ${profile.profileName}`;
+
+            const newProfile = await this.profileRepository.save(profile);
+            this.logger.verbose(`${user.discordTag} duplicated a profile (${newProfile.profileId})`);
+            
+            delete newProfile.user;
+            return newProfile; 
+        } catch (err) {
+            this.logger.error('Unable to duplicate profile', err);
+            throw new InternalServerErrorException('Unable to update profile'); 
+        }
+    }
+
+    /**
      * Save a new profile
      * @param user The user
      * @param id The profile id
