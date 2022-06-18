@@ -12,6 +12,11 @@ import { lastValueFrom } from 'rxjs';
 // Services
 import { UserService } from 'src/user/user.service';
 
+// Config
+import * as config from 'config';
+const successPointsRewards = config.get('successPointsRewards');
+
+
 @Injectable()
 export class SuccessService {
     private logger = new Logger('SuccessService');
@@ -21,7 +26,6 @@ export class SuccessService {
         private readonly httpService: HttpService,
         private readonly userService: UserService
     ){}
-
 
     async handleSuccessPost(msg: Message): Promise<void>{
         try {
@@ -71,16 +75,18 @@ export class SuccessService {
         });
         const tweet = tweetResp.data as any;
 
-        const successPoints = await this.userService.mutateSuccessPoints(msg.author.id, 'add', 1);
+        const [previousPoints, points] = await this.userService.mutateSuccessPoints(msg.author.id, 'add', 1);
 
         const embed = new MessageEmbed()
             .setColor('#6366F1')
             .setTitle('Your tweet was posted! React with :wastebasket: to delete')
-            .setDescription(`We've added 1 succes point to your account, you now have a total of ${successPoints} points.`)
+            .setDescription(`We've added 1 succes point to your account, you now have a total of ${points} points.`)
             .setTimestamp()
             .setFooter({ text: 'HutsAIO', iconURL: `https://i.imgur.com/cXu8bLX.png?author=${msg.member.id}&tweetId=${tweet.id_str}` });
                 
         msg.channel.send({ embeds: [embed] }).then(msg => msg.react('🗑'));
+
+        this.checkRewards(previousPoints, points, msg);
         this.logger.verbose(`${msg.author.tag} posted a success image`);
     }
     
@@ -130,16 +136,17 @@ export class SuccessService {
 
         await this.twit.post('statuses/retweet/:id', { id: tweetId[1] });
 
-        const successPoints = await this.userService.mutateSuccessPoints(msg.author.tag, 'add', 2);
+        const [previousPoints, points] = await this.userService.mutateSuccessPoints(msg.author.tag, 'add', 2);
 
         const embed = new MessageEmbed()
             .setColor('#6366F1')
             .setTitle('Thank you for tweeting your success')
-            .setDescription(`We've added 2 succes points to your account, you now have a total of ${successPoints} points.`)
+            .setDescription(`We've added 2 succes points to your account, you now have a total of ${points} points.`)
             .setTimestamp()
             .setFooter({ text: 'HutsAIO', iconURL: 'https://i.imgur.com/cXu8bLX.png' });
 
         msg.channel.send({ embeds: [embed] });
+        this.checkRewards(previousPoints, points, msg);
         this.logger.verbose(`${msg.author.tag} posted a success tweet`);
     }
 
@@ -158,17 +165,51 @@ export class SuccessService {
         if (msgOwner !== user.id) return;
 
         await this.twit.post('statuses/destroy/:id', { id: tweetId });
-        const successPoints = await this.userService.mutateSuccessPoints(user.id, 'substract', 1);
+        const [previousPoints, points] = await this.userService.mutateSuccessPoints(user.id, 'substract', 1);
 
         const embed = new MessageEmbed()
             .setColor('#6366F1')
             .setTitle('Your tweet was deleted!')
-            .setDescription(`You now have a total of ${successPoints} points.`)
+            .setDescription(`You now have a total of ${points} points.`)
             .setTimestamp()
             .setFooter({ text: 'HutsAIO', iconURL: 'https://i.imgur.com/cXu8bLX.png' });
                
         msg.message.edit({ embeds: [embed] });
         this.logger.verbose(`${user.tag} deleted his success image`);
 
+    }
+
+    /**
+     * Checks if user earned a reward
+     * @param previousPoints Amount of points before posting
+     * @param points Amount of points after posting
+     * @param msg Discord message to react to
+     */
+    async checkRewards(previousPoints: number, points: number, msg: Message): Promise<void>{
+        const { freeMonth, chefRole } = successPointsRewards;
+
+        // Free month
+        if (previousPoints < freeMonth && points >= freeMonth){
+            const embed = new MessageEmbed()
+                .setColor('#6366F1')
+                .setTitle(`:tada: Ding Dong! ${msg.author.tag} earned a free month! :tada:`)
+                .setDescription(`<@${msg.author.id}> please open a ticket to claim.`)
+                .setTimestamp()
+                .setFooter({ text: 'HutsAIO', iconURL: 'https://i.imgur.com/cXu8bLX.png' });
+
+            msg.channel.send({ embeds: [embed] });
+        }
+
+        // Chef role
+        else if (previousPoints < chefRole && points >= chefRole){
+            const embed = new MessageEmbed()
+                .setColor('#6366F1')
+                .setTitle(`:tada: Ding Dong! ${msg.author.tag} earned the chef role! :tada:`)
+                .setDescription(`<@${msg.author.id}> please open a ticket to claim.`)
+                .setTimestamp()
+                .setFooter({ text: 'HutsAIO', iconURL: 'https://i.imgur.com/cXu8bLX.png' });
+
+            msg.channel.send({ embeds: [embed] });
+        }
     }
 }

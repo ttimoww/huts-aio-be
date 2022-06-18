@@ -40,6 +40,7 @@
     "@types/twit": "^2.2.30",
     "axios": "^0.27.2",
     "class-transformer": "^0.5.1",
+    "config": "^3.3.7",
     "discord.js": "^13.7.0",
     "dotenv": "^16.0.0",
     "helmet": "^5.1.0",
