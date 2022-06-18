@@ -1,7 +1,7 @@
 import { Module } from '@nestjs/common';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { DiscordModule as DiscModule } from '@discord-nestjs/core';
-import { Intents, User } from 'discord.js';
+import { Intents } from 'discord.js';
 import { HttpModule, HttpService } from '@nestjs/axios';
 
 // Gateways

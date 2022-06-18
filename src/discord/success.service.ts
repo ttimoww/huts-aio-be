@@ -159,12 +159,16 @@ export class SuccessService {
         if (!msg.message.embeds.length) return;
 
         const urlData = msg.message.embeds[0].footer.iconURL;
+        // eslint-disable-next-line no-useless-escape
         const msgOwner = urlData.match(/(?:(?:author\=)([0-9]+))/i)[1];
+        // eslint-disable-next-line no-useless-escape
         const tweetId = urlData.match(/(?:(?:tweetId\=)([0-9]+))/i)[1];
     
         if (msgOwner !== user.id) return;
 
         await this.twit.post('statuses/destroy/:id', { id: tweetId });
+        
+        // eslint-disable-next-line @typescript-eslint/no-unused-vars
         const [previousPoints, points] = await this.userService.mutateSuccessPoints(user.id, 'substract', 1);
 
         const embed = new MessageEmbed()
@@ -185,7 +189,7 @@ export class SuccessService {
      * @param points Amount of points after posting
      * @param msg Discord message to react to
      */
-    async checkRewards(previousPoints: number, points: number, msg: Message): Promise<void>{
+    private async checkRewards(previousPoints: number, points: number, msg: Message): Promise<void>{
         const { freeMonth, chefRole } = successPointsRewards;
 
         // Free month
