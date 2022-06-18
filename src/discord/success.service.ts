@@ -18,6 +18,7 @@ import { Webhook } from './entities/webhook.entity';
 import Twit from 'twit';
 import { map } from 'rxjs/operators';
 import { lastValueFrom } from 'rxjs';
+import { UserService } from 'src/user/user.service';
 
 @Injectable()
 export class SuccessService {
@@ -25,7 +26,8 @@ export class SuccessService {
 
     constructor(
         private readonly twit: Twit,
-        private readonly httpService: HttpService
+        private readonly httpService: HttpService,
+        private readonly userService: UserService
     ){}
 
     async handleSuccessPost(msg: Message): Promise<void>{
@@ -74,10 +76,13 @@ export class SuccessService {
         });
         const tweet = tweetResp.data as any;
 
+        const successPoints = await this.userService.mutateSuccessPoints(msg.author.tag, 'add', 1);
+
+
         const embed = new MessageEmbed()
             .setColor('#6366F1')
             .setTitle('Your tweet was posted! React with :wastebasket: to delete')
-            .setDescription('We\'ve added 1 succespoint to your account.')
+            .setDescription(`We've added 1 succes point to your account, you now have a total of ${successPoints} points.`)
             .setTimestamp()
             .setFooter({ text: 'HutsAIO', iconURL: `https://i.imgur.com/cXu8bLX.png?author=${msg.member.id}&tweetId=${tweet.id_str}` });
                 
@@ -100,39 +105,38 @@ export class SuccessService {
             return;
         }
 
-        this.twit.get('statuses/show/:id', { id: tweetId[1] }, (err, data: any, resp) => {   
-            
-            /**
-             * Tweet should contain at least one tag and one media item
-             */
-            if (!data.entities?.user_mentions || !data.entities?.media) return;
+        const resp = await this.twit.get('statuses/show/:id', { id: tweetId[1] });
+        const tweet = resp.data as any;
 
-            const tagged = data.entities.user_mentions.some(tag => tag.screen_name === 'HutsAIO' || tag.screen_name === 'HutsSuccess');
-            if (!tagged){
-                const embed = new MessageEmbed()
-                    .setColor('#6366F1')
-                    .setTitle('Your tweet doesn\'t tag us')
-                    .setDescription('Make sure to tag @HutsAIO when posting your success!')
-                    .setTimestamp()
-                    .setFooter({ text: 'HutsAIO', iconURL: 'https://i.imgur.com/cXu8bLX.png' });
-                
-                msg.channel.send({ embeds: [embed] });
-                return;
-            }
+        /**
+         * Tweet should contain at least one tag and one media item
+         */
+        if (!tweet.entities?.user_mentions || !tweet.entities?.media) return;
 
-            // this.twit.post('statuses/retweet/:id', { id: tweetId[1] })
-
+        const tagged = tweet.entities.user_mentions.some(tag => tag.screen_name === 'HutsAIO' || tag.screen_name === 'HutsSuccess');
+        if (!tagged){
             const embed = new MessageEmbed()
                 .setColor('#6366F1')
-                .setTitle('Thank you for tweeting your success')
-                .setDescription('We\'ve added 2 succespoints to your account.')
+                .setTitle('Your tweet doesn\'t tag us')
+                .setDescription('Make sure to tag @HutsAIO when posting your success!')
                 .setTimestamp()
                 .setFooter({ text: 'HutsAIO', iconURL: 'https://i.imgur.com/cXu8bLX.png' });
+     
+            msg.channel.send({ embeds: [embed] });
+            return;
+        }
 
-            msg.channel.send({ embeds: [embed] })
-                .then(msg => {
-                    msg.react('🗑');
-                });
-        });
+        // this.twit.post('statuses/retweet/:id', { id: tweetId[1] })
+
+        const successPoints = await this.userService.mutateSuccessPoints(msg.author.tag, 'add', 2);
+
+        const embed = new MessageEmbed()
+            .setColor('#6366F1')
+            .setTitle('Thank you for tweeting your success')
+            .setDescription(`We've added 2 succes points to your account, you now have a total of ${successPoints} points.`)
+            .setTimestamp()
+            .setFooter({ text: 'HutsAIO', iconURL: 'https://i.imgur.com/cXu8bLX.png' });
+
+        msg.channel.send({ embeds: [embed] });
     }
 }

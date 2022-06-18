@@ -1,7 +1,7 @@
 import { Module } from '@nestjs/common';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { DiscordModule as DiscModule } from '@discord-nestjs/core';
-import { Intents } from 'discord.js';
+import { Intents, User } from 'discord.js';
 import { HttpModule, HttpService } from '@nestjs/axios';
 
 // Gateways
@@ -16,9 +16,13 @@ import { WebhookController } from './webhook.controller';
 // Services
 import { WebhookService } from './webhook.service';
 import { SuccessService } from './success.service';
+import { UserService } from 'src/user/user.service';
 
 // Entities
 import { Webhook } from './entities/webhook.entity';
+
+// Modules
+import { UserModule } from 'src/user/user.module';
 
 // Twitter
 import Twit = require('twit')
@@ -34,11 +38,12 @@ import Twit = require('twit')
             }),
         }),
         TypeOrmModule.forFeature([Webhook]),
-        HttpModule
+        HttpModule,
+        UserModule
     ],
     providers: [{
         provide: SuccessService,
-        useFactory: (httpService: HttpService) => {
+        useFactory: (httpService: HttpService, userService: UserService) => {
             return new SuccessService(
                 new Twit({
                     consumer_key: process.env.TWITTER_CONSUMER_KEY,
@@ -46,10 +51,11 @@ import Twit = require('twit')
                     access_token: process.env.TWITTER_ACCESS_TOKEN,
                     access_token_secret: process.env.TWITTER_TOKEN_SECRET
                 }),
-                httpService
+                httpService,
+                userService
             );
         },
-        inject: [HttpService]
+        inject: [HttpService, UserService]
     },
     LeaderboardCommand, SuccessGateway, WebhookService],
     exports: [WebhookService],
