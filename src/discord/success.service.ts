@@ -1,23 +1,15 @@
-// NestJS Dependencies
-import { InjectDiscordClient } from '@discord-nestjs/core';
 import { Injectable, Logger } from '@nestjs/common';
-import { InjectRepository } from '@nestjs/typeorm';
 import { HttpService } from '@nestjs/axios';
-import { Repository, FindOneOptions } from 'typeorm';
 
 // Discord
-import { Client, Message, MessageEmbed, TextChannel, WebhookClient } from 'discord.js';
+import { ClientUser, Message, MessageEmbed, MessageReaction } from 'discord.js';
 
-// Dto
-import { CheckoutDto } from 'src/checkout/checkout.dto';
-import { WebhookDto } from './dto/webhook.dto';
-
-// Entities
-import { User } from 'src/user/entities/user.entity';
-import { Webhook } from './entities/webhook.entity';
+// Packages
 import Twit from 'twit';
 import { map } from 'rxjs/operators';
 import { lastValueFrom } from 'rxjs';
+
+// Services
 import { UserService } from 'src/user/user.service';
 
 @Injectable()
@@ -29,6 +21,7 @@ export class SuccessService {
         private readonly httpService: HttpService,
         private readonly userService: UserService
     ){}
+
 
     async handleSuccessPost(msg: Message): Promise<void>{
         try {
@@ -46,9 +39,11 @@ export class SuccessService {
         }
     }
 
+    /**
+     * Tweet a success image and award 1 success point
+     * @param msg The Discord message
+     */
     private async handleImage(msg: Message){
-        this.logger.verbose('handle image');
-
         const attachments = msg.attachments.map(att => att.url);
 
         /**
@@ -76,8 +71,7 @@ export class SuccessService {
         });
         const tweet = tweetResp.data as any;
 
-        const successPoints = await this.userService.mutateSuccessPoints(msg.author.tag, 'add', 1);
-
+        const successPoints = await this.userService.mutateSuccessPoints(msg.author.id, 'add', 1);
 
         const embed = new MessageEmbed()
             .setColor('#6366F1')
@@ -87,9 +81,17 @@ export class SuccessService {
             .setFooter({ text: 'HutsAIO', iconURL: `https://i.imgur.com/cXu8bLX.png?author=${msg.member.id}&tweetId=${tweet.id_str}` });
                 
         msg.channel.send({ embeds: [embed] }).then(msg => msg.react('🗑'));
+        this.logger.verbose(`${msg.author.tag} posted a success image`);
     }
     
-    private async handleTweet(msg: Message){        
+    /**
+     * Retweet a success tweet and award 2 success points. 
+     * Tweet has to match the following requirements:
+     * - Contain media
+     * - Tag HutsAIO or HutsSuccess
+     * @param msg The Discord message
+     */
+    private async handleTweet(msg: Message): Promise<void>{        
         const tweetIdRegex = new RegExp(/(?:(?:\/status\/)([0-9]+))/, '');
         const tweetId = msg.content.match(tweetIdRegex);
 
@@ -126,7 +128,7 @@ export class SuccessService {
             return;
         }
 
-        // this.twit.post('statuses/retweet/:id', { id: tweetId[1] })
+        await this.twit.post('statuses/retweet/:id', { id: tweetId[1] });
 
         const successPoints = await this.userService.mutateSuccessPoints(msg.author.tag, 'add', 2);
 
@@ -138,5 +140,35 @@ export class SuccessService {
             .setFooter({ text: 'HutsAIO', iconURL: 'https://i.imgur.com/cXu8bLX.png' });
 
         msg.channel.send({ embeds: [embed] });
+        this.logger.verbose(`${msg.author.tag} posted a success tweet`);
+    }
+
+    /**
+     * Remove a tweet and substract a point
+     * @param msg The MessageReaction
+     * @param user The user who perfomed the reaction
+     */
+    async removeTweet(msg: MessageReaction, user: ClientUser): Promise<void>{
+        if (!msg.message.embeds.length) return;
+
+        const urlData = msg.message.embeds[0].footer.iconURL;
+        const msgOwner = urlData.match(/(?:(?:author\=)([0-9]+))/i)[1];
+        const tweetId = urlData.match(/(?:(?:tweetId\=)([0-9]+))/i)[1];
+    
+        if (msgOwner !== user.id) return;
+
+        await this.twit.post('statuses/destroy/:id', { id: tweetId });
+        const successPoints = await this.userService.mutateSuccessPoints(user.id, 'substract', 1);
+
+        const embed = new MessageEmbed()
+            .setColor('#6366F1')
+            .setTitle('Your tweet was deleted!')
+            .setDescription(`You now have a total of ${successPoints} points.`)
+            .setTimestamp()
+            .setFooter({ text: 'HutsAIO', iconURL: 'https://i.imgur.com/cXu8bLX.png' });
+               
+        msg.message.edit({ embeds: [embed] });
+        this.logger.verbose(`${user.tag} deleted his success image`);
+
     }
 }

@@ -1,6 +1,6 @@
 import { Injectable, Logger } from '@nestjs/common';
 import { On, Once, InjectDiscordClient, UseGuards } from '@discord-nestjs/core';
-import { Client, Message } from 'discord.js';
+import { Client, ClientUser, Message, MessageReaction } from 'discord.js';
 import { SuccessChannelGuard } from './guards/success-channel.guard';
 import { SuccessService } from './success.service';
 
@@ -24,6 +24,14 @@ export class SuccessGateway {
     async onMessage(msg: Message): Promise<void> {
         if (!msg.author.bot) {
             this.successService.handleSuccessPost(msg);
+        }
+    }
+
+    @UseGuards(SuccessChannelGuard)
+    @On('messageReactionAdd')
+    async onReact(msg: MessageReaction, user: ClientUser): Promise<void> {
+        if (!user.bot){
+            this.successService.removeTweet(msg, user);
         }
     }
 }

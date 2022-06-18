@@ -23,18 +23,18 @@ export class UserService {
 
     /**
      * Add or Substract successpoints to a user
-     * @param discordTag The user to add or substract points to
+     * @param discordId The user to add or substract points to
      * @param type Add or Substract
      * @param amount Amount
      * @returns The new amount of successpoints
      */
-    async mutateSuccessPoints(discordTag: string, type: 'add' | 'subtract', amount: number): Promise<number>{
-        const user = await this.userRepository.findOne({ where: { discordTag: discordTag } });
+    async mutateSuccessPoints(discordId: string, type: 'add' | 'substract', amount: number): Promise<number>{
+        const user = await this.userRepository.findOneOrFail({ where: { discordId: discordId } });
         
         if (type === 'add'){
             user.successPoints += amount;
         }else{
-            user.successPoints -+ amount;
+            user.successPoints -= amount;
         }
 
         const savedUser = await this.userRepository.save(user);
