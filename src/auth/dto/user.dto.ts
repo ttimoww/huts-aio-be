@@ -9,4 +9,13 @@ export class UserDto {
 
     @ApiProperty()
         discordImage: string;
+        
+    @ApiProperty()
+        plan: string;
+
+    @ApiProperty()
+        email: string;
+
+    @ApiProperty()
+        key: string;
 }

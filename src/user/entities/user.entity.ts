@@ -12,6 +12,9 @@ export class User{
     @Column()
         discordId: string;
 
+    @Column({ nullable: true })
+        email: string;
+
     @Column({ unique: true })
         discordTag: string;
     
@@ -33,7 +36,8 @@ export class User{
     @OneToOne(() => Webhook, webhook => webhook.user)
         webhook: Webhook;
 
-    constructor(discordId: string, discordTag: string, discordImage: string) {
+    constructor(email: string, discordId: string, discordTag: string, discordImage: string) {
+        this.email = email;
         this.discordId = discordId;
         this.discordTag = discordTag;
         this.discordImage = discordImage;

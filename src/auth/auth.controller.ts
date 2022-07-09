@@ -40,7 +40,10 @@ export class AuthController {
             access_token: token.access_token,
             discordId: license.user.discordId, 
             discordImage: license.user.discordImage, 
-            discordTag: license.user.discordTag
+            discordTag: license.user.discordTag,
+            email: license.user.email,
+            plan: license.plan,
+            key: license.key
         };
     }
 
