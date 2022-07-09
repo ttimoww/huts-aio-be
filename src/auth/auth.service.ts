@@ -54,6 +54,7 @@ export class AuthService {
                 data.user.photo_url,
                 data.email,
                 data.plan.id,
+                data.plan.name,
                 data.key,
                 data.id
             );
@@ -91,9 +92,9 @@ export class AuthService {
         if (!license) {
             try {
                 let user = await this.userService.findOne({ where: { discordId: keyData.discordId } });
-                if (!user) user = await this.userService.save(new User(keyData.discordId, keyData.discordTag, keyData.discordImage));
-    
-                const license = await this.licenseRepository.save(new License(keyData.licenseId, keyData.plan, keyData.key, new Date(), ip, user));
+                if (!user) user = await this.userService.save(new User(keyData.email, keyData.discordId, keyData.discordTag, keyData.discordImage));
+                
+                const license = await this.licenseRepository.save(new License(keyData.licenseId, keyData.planId, keyData.plan, keyData.key, new Date(), ip, user));
 
                 this.logger.verbose(`${license.user.discordTag} logged in with a new license (${license.licenseId})`);
                 return license;
@@ -109,6 +110,7 @@ export class AuthService {
         license.lastValidation = new Date();
         license.key = key;
         license.ip = ip;
+        license.plan = keyData.plan;
         await this.licenseRepository.save(license);
 
         /**
@@ -118,6 +120,7 @@ export class AuthService {
         user.discordId = keyData.discordId;
         user.discordTag = keyData.discordTag;
         user.discordImage = keyData.discordImage;
+        user.email = keyData.email;
         await this.userService.save(user);
 
         this.logger.verbose(`${user.discordTag} logged in`);
@@ -154,7 +157,7 @@ export class AuthService {
         if (!license) throw new UnauthorizedException();
 
         const msSinceLastAuth = new Date().getTime() - license.lastValidation.getTime() ;
-        if (msSinceLastAuth > 1) { // 300000ms = 5min
+        if (msSinceLastAuth > 300000) { // 300000ms = 5min
             const keyData = await this.getHyperKeyData(license.key);
             
             /**
@@ -172,7 +175,6 @@ export class AuthService {
             user.discordTag = keyData.discordTag;
             user.discordImage = keyData.discordImage;
             return await this.userService.save(user);
-             
         }
 
         return license.user;
