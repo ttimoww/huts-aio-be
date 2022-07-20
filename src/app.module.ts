@@ -11,6 +11,7 @@ import { CheckoutModule } from './checkout/checkout.module';
 import { DiscordModule } from './discord/discord.module';
 import { APP_GUARD } from '@nestjs/core';
 import { ProfileModule } from './profile/profile.module';
+import { LogModule } from './log/log.module';
 
 @Module({
     imports: [
@@ -24,6 +25,7 @@ import { ProfileModule } from './profile/profile.module';
             limit: 30,
         }),
         ProfileModule,
+        LogModule,
     ],
     controllers: [],
     providers: [

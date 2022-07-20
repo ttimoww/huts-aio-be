@@ -9,7 +9,7 @@ import { Profile } from './profile.entity';
 
 // Dto's
 import { ProfileDto } from './profile.dto';
-import { ResultDto } from 'src/lib/dto/result.dto';
+import { SuccessDto } from 'src/lib/dto/success.dto';
 
 @Injectable()
 export class ProfileService {
@@ -121,7 +121,7 @@ export class ProfileService {
      * @param id The profile to delete
      * @returns Wheter the deletion succeeded or not
      */
-    async deleteProfile(user: User, id: number): Promise<ResultDto>{
+    async deleteProfile(user: User, id: number): Promise<SuccessDto>{
         const profile = await this.profileRepository.findOne({ 
             where: { profileId: id },
             relations: ['user']
@@ -132,6 +132,6 @@ export class ProfileService {
         if (profile.user?.userId !== user.userId) throw new ForbiddenException();
 
         const result = this.profileRepository.delete(profile);
-        return { result: !!result };
+        return { success: !!result };
     }
 }

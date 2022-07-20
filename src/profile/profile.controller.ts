@@ -3,7 +3,7 @@ import { Body, Controller, Post, Get, Request, Delete, Param, Patch } from '@nes
 import { ApiBearerAuth, ApiBody, ApiOkResponse, ApiTags } from '@nestjs/swagger';
 
 // Dto's
-import { ResultDto } from 'src/lib/dto/result.dto';
+import { SuccessDto } from 'src/lib/dto/success.dto';
 import { ProfileDto } from './profile.dto';
 
 // Interfaces
@@ -49,8 +49,8 @@ export class ProfileController {
     }
 
     @Delete(':id')
-    @ApiOkResponse({ type: ResultDto })
-    async deleteCheckout(@Request() req: IRequestWithUser, @Param('id') id: number): Promise<ResultDto>{
+    @ApiOkResponse({ type: SuccessDto })
+    async deleteCheckout(@Request() req: IRequestWithUser, @Param('id') id: number): Promise<SuccessDto>{
         return await this.profileService.deleteProfile(req.user, id);
     }
 }

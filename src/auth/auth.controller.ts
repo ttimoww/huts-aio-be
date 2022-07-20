@@ -18,7 +18,7 @@ import { UserTokenDto } from './dto/user-token.dto';
 
 // Interfaces
 import { IRequestWithLicense } from './../lib/interfaces/request-with-license.interface';
-import { ResultDto } from 'src/lib/dto/result.dto';
+import { SuccessDto } from 'src/lib/dto/success.dto';
 
 @Controller('/auth')
 @ApiTags('auth')
@@ -50,7 +50,7 @@ export class AuthController {
   @ApiBearerAuth()
   @ApiOkResponse({ type: UserDto })
   @Get('/check-token')
-  checkToken(): ResultDto {
-      return { result: true };
+  checkToken(): SuccessDto {
+      return { success: true };
   }
 }

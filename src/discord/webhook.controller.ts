@@ -3,7 +3,7 @@ import { Body, Controller, Post, Get, Request, Delete, NotFoundException } from 
 import { ApiBearerAuth, ApiBody, ApiOkResponse, ApiTags } from '@nestjs/swagger';
 
 // Dto's
-import { ResultDto } from 'src/lib/dto/result.dto';
+import { SuccessDto } from 'src/lib/dto/success.dto';
 import { WebhookDto } from './dto/webhook.dto';
 
 // Interfaces
@@ -36,9 +36,9 @@ export class WebhookController {
     }
 
     @Delete()
-    @ApiOkResponse({ type: ResultDto })
-    async deleteWebhook(@Request() req: IRequestWithUser): Promise<ResultDto>{
+    @ApiOkResponse({ type: SuccessDto })
+    async deleteWebhook(@Request() req: IRequestWithUser): Promise<SuccessDto>{
         const result = await this.webhookService.delete(req.user);
-        return { result: result };
+        return { success: result };
     }
 }
