@@ -15,6 +15,18 @@ import { WebhookDto } from './dto/webhook.dto';
 import { User } from 'src/user/entities/user.entity';
 import { Webhook } from './entities/webhook.entity';
 
+// Enums
+import { Store } from 'src/lib/enums/store.enum';
+
+// Dictionary to format the store name
+const storeDictionary = {
+    [Store.LVR]: 'Luisaviaroma',
+    [Store.Snipes]: 'Snipes',
+    [Store.Solebox]: 'Solebox',
+    [Store.Zalando]: 'Zalando',
+    [Store.Kith]: 'Kith EU',
+    [Store.Supreme]: 'Supreme',
+};
 @Injectable()
 export class WebhookService {
     private logger = new Logger('WebhookService');
@@ -57,6 +69,9 @@ export class WebhookService {
      * @param checkout Checkout details
      */
     private async sendPublicWebhook(user: User, checkout: CheckoutDto): Promise<void>{
+
+
+
         try {
             const channel = this.discordClient.channels.cache.get(process.env.DISC_PUBLIC_SUCCESS_CHANNEL) as TextChannel;
             const embed = new MessageEmbed()
@@ -67,7 +82,7 @@ export class WebhookService {
                     { name: 'Product', value: checkout.productUrl ? `[${checkout.productName}](${checkout.productUrl})` : checkout.productName, inline: true },
                     { name: 'Size', value: checkout.productSize, inline: true },
                     { name: 'Price', value: checkout.productPrice, inline: true },
-                    { name: 'Store', value: checkout.store.charAt(0).toUpperCase() + checkout.store.slice(1), inline: true },
+                    { name: 'Store', value: storeDictionary[checkout.store], inline: true },
                     { name: 'User', value: user.discordTag, inline: true },
                 )
                 .setTimestamp()
@@ -99,7 +114,7 @@ export class WebhookService {
                     { name: 'Product', value: checkout.productUrl ? `[${checkout.productName}](${checkout.productUrl})` : checkout.productName, inline: true },
                     { name: 'Size', value: checkout.productSize, inline: true },
                     { name: 'Price', value: checkout.productPrice, inline: true },
-                    { name: 'Store', value: checkout.store.charAt(0).toUpperCase() + checkout.store.slice(1), inline: true },
+                    { name: 'Store', value: storeDictionary[checkout.store], inline: true },
                 )
                 .setTimestamp()
                 .setFooter({ text: 'HutsAIO', iconURL: 'https://i.imgur.com/cXu8bLX.png' });

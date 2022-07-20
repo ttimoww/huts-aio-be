@@ -3,6 +3,7 @@ import { Entity, PrimaryGeneratedColumn, Column, OneToMany, OneToOne } from 'typ
 import { License } from '../../auth/license.entity';
 import { Webhook } from 'src/discord/entities/webhook.entity';
 import { Profile } from 'src/profile/profile.entity';
+import { Log } from 'src/log/entities/log.entity';
 
 @Entity()
 export class User{
@@ -32,6 +33,9 @@ export class User{
 
     @OneToMany(() => Profile, profile => profile.user)
         profiles: Profile[];
+    
+    @OneToMany(() => Log, log => log.user)
+        logs: Log[];
     
     @OneToOne(() => Webhook, webhook => webhook.user)
         webhook: Webhook;

@@ -3,7 +3,7 @@ import { Body, Controller, Post, Get, Request, Delete, Param } from '@nestjs/com
 import { ApiBearerAuth, ApiBody, ApiOkResponse, ApiTags } from '@nestjs/swagger';
 
 // Dto's
-import { ResultDto } from 'src/lib/dto/result.dto';
+import { SuccessDto } from 'src/lib/dto/success.dto';
 import { CheckoutDto } from './checkout.dto';
 
 // Interfaces
@@ -35,8 +35,8 @@ export class CheckoutController {
     }
 
     @Delete(':id')
-    @ApiOkResponse({ type: ResultDto })
-    async deleteCheckout(@Request() req: IRequestWithUser, @Param('id') id: number): Promise<ResultDto>{
+    @ApiOkResponse({ type: SuccessDto })
+    async deleteCheckout(@Request() req: IRequestWithUser, @Param('id') id: number): Promise<SuccessDto>{
         return await this.checkoutService.deleteCheckout(req.user, id);
     }
 }
