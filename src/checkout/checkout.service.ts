@@ -9,7 +9,7 @@ import { Checkout } from './checkout.entity';
 
 // Dto's
 import { CheckoutDto } from './checkout.dto';
-import { ResultDto } from 'src/lib/dto/result.dto';
+import { SuccessDto } from 'src/lib/dto/success.dto';
 
 // Service
 import { WebhookService } from 'src/discord/webhook.service';
@@ -58,9 +58,6 @@ export class CheckoutService {
             else body.productImage = 'https://i.imgur.com/cXu8bLX.png';
         }
 
-        // LVR CDN Blocks Discord, so we'll always show the logo for now
-        if (body.store === Store.LVR) body.productImage = 'https://www.wsj.com/coupons/static/shop/37360/logo/luisa_via_roma_promo_code.png';
-
         this.webhookService.send(user, body);
         try {
             const checkout = await this.checkoutRepository.save(new Checkout(body, user));   
@@ -77,7 +74,7 @@ export class CheckoutService {
      * @param id The checkout to delete
      * @returns Wheter the deletion succeeded or not
      */
-    async deleteCheckout(user: User, id: number): Promise<ResultDto>{
+    async deleteCheckout(user: User, id: number): Promise<SuccessDto>{
         const checkout = await this.checkoutRepository.findOne({ 
             where: { checkoutId: id },
             relations: ['user']
@@ -88,6 +85,6 @@ export class CheckoutService {
         if (checkout.user.userId !== user.userId) throw new ForbiddenException();
 
         const result = this.checkoutRepository.delete(checkout);
-        return { result: !!result };
+        return { success: !!result };
     }
 }

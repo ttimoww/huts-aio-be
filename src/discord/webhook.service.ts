@@ -15,6 +15,20 @@ import { WebhookDto } from './dto/webhook.dto';
 import { User } from 'src/user/entities/user.entity';
 import { Webhook } from './entities/webhook.entity';
 
+// Enums
+import { Store } from 'src/lib/enums/store.enum';
+import { ModuleErrorLog } from 'src/log/entities/module-error-log.entity';
+import { Log } from 'src/log/entities/log.entity';
+
+// Dictionary to format the store name
+const storeDictionary = {
+    [Store.LVR]: 'Luisaviaroma',
+    [Store.Snipes]: 'Snipes',
+    [Store.Solebox]: 'Solebox',
+    [Store.Zalando]: 'Zalando',
+    [Store.Kith]: 'Kith EU',
+    [Store.Supreme]: 'Supreme',
+};
 @Injectable()
 export class WebhookService {
     private logger = new Logger('WebhookService');
@@ -47,8 +61,8 @@ export class WebhookService {
     }
 
     async send(user: User, checkout: CheckoutDto): Promise<void>{
-        this.sendPublicWebhook(user, checkout);
-        this.sendPrivateWebhook(user, checkout);
+        this.sendPublicSuccessWebhook(user, checkout);
+        this.sendPrivateSuccessWebhook(user, checkout);
     }
 
     /**
@@ -56,7 +70,12 @@ export class WebhookService {
      * @param user The creator of the checkout
      * @param checkout Checkout details
      */
-    private async sendPublicWebhook(user: User, checkout: CheckoutDto): Promise<void>{
+    private async sendPublicSuccessWebhook(user: User, checkout: CheckoutDto): Promise<void>{
+        if (!process.env.DISC_PUBLIC_SUCCESS_CHANNEL) {
+            this.logger.warn('No public success channel id found');
+            return;
+        }
+        
         try {
             const channel = this.discordClient.channels.cache.get(process.env.DISC_PUBLIC_SUCCESS_CHANNEL) as TextChannel;
             const embed = new MessageEmbed()
@@ -67,11 +86,11 @@ export class WebhookService {
                     { name: 'Product', value: checkout.productUrl ? `[${checkout.productName}](${checkout.productUrl})` : checkout.productName, inline: true },
                     { name: 'Size', value: checkout.productSize, inline: true },
                     { name: 'Price', value: checkout.productPrice, inline: true },
-                    { name: 'Store', value: checkout.store.charAt(0).toUpperCase() + checkout.store.slice(1), inline: true },
+                    { name: 'Store', value: storeDictionary[checkout.store], inline: true },
                     { name: 'User', value: user.discordTag, inline: true },
                 )
                 .setTimestamp()
-                .setFooter({ text: 'HutsAIO', iconURL: 'https://i.imgur.com/cXu8bLX.png' });
+                .setFooter({ text: 'HutsAIO', iconURL: 'https://i.imgur.com/jfxiS00.jpeg' });
 
             channel.send({ embeds: [embed] });
         } catch (err) {
@@ -85,7 +104,7 @@ export class WebhookService {
      * @param user The creator of the checkout
      * @param checkout Checkout details
      */
-    private async sendPrivateWebhook(user: User, checkout: CheckoutDto): Promise<void>{
+    private async sendPrivateSuccessWebhook(user: User, checkout: CheckoutDto): Promise<void>{
         try {
             const webhook = await this.webhookRepository.findOne({ where: { user: user } });
             if (!webhook) return;
@@ -99,10 +118,10 @@ export class WebhookService {
                     { name: 'Product', value: checkout.productUrl ? `[${checkout.productName}](${checkout.productUrl})` : checkout.productName, inline: true },
                     { name: 'Size', value: checkout.productSize, inline: true },
                     { name: 'Price', value: checkout.productPrice, inline: true },
-                    { name: 'Store', value: checkout.store.charAt(0).toUpperCase() + checkout.store.slice(1), inline: true },
+                    { name: 'Store', value: storeDictionary[checkout.store], inline: true },
                 )
                 .setTimestamp()
-                .setFooter({ text: 'HutsAIO', iconURL: 'https://i.imgur.com/cXu8bLX.png' });
+                .setFooter({ text: 'HutsAIO', iconURL: 'https://i.imgur.com/jfxiS00.jpeg' });
 
             if (checkout.orderId) embed.addField('Order ID', checkout.orderId, true);
             if (checkout.account) embed.addField('Account', `||${checkout.account}||`, true);
@@ -111,6 +130,34 @@ export class WebhookService {
             webhookClient.send({ embeds: [embed] });
         } catch (err) {
             this.logger.error(`Unable to send private webhook for ${user.discordTag}`, err);
+        }
+    }
+
+    /**
+     * Formats and sends the log in the Discord logs channel
+     * @param log The log to send
+     */
+    public async sendLogWebhook(log: Log): Promise<void>{
+        if (!process.env.DISC_ERROR_LOG_CHANNEL) {
+            this.logger.warn('No error channel id found');
+            return;
+        }
+
+        if (log instanceof ModuleErrorLog){
+            const moduleErrorLog = log as ModuleErrorLog;
+            const channel = this.discordClient.channels.cache.get(process.env.DISC_ERROR_LOG_CHANNEL) as TextChannel;
+            const embed = new MessageEmbed()
+                .setColor('#e74c3c')
+                .setTitle('Module Error')
+                .addFields(
+                    { name: 'Store', value: storeDictionary[log.store], inline: true },
+                    { name: 'User', value: moduleErrorLog.user.discordTag, inline: true },
+                    { name: 'Error', value: '```' + moduleErrorLog.error + '```' },
+                    { name: 'Info', value: '```' + moduleErrorLog.extraInfo + '```', inline: true },
+                )
+                .setTimestamp()
+                .setFooter({ text: 'HutsAIO', iconURL: 'https://i.imgur.com/jfxiS00.jpeg' });
+            channel.send({ embeds: [embed] });
         }
     }
 }
