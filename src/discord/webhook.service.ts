@@ -123,7 +123,7 @@ export class WebhookService {
                 .setTimestamp()
                 .setFooter({ text: 'HutsAIO', iconURL: 'https://i.imgur.com/jfxiS00.jpeg' });
 
-            if (checkout.orderId) embed.addField('Order ID', checkout.orderId, true);
+            if (checkout.orderId) embed.addField('Order ID', `||${checkout.orderId}||`, true);
             if (checkout.account) embed.addField('Account', `||${checkout.account}||`, true);
             if (checkout.paymentUrl) embed.addField('Payment URL', `[Click](${checkout.paymentUrl})`);
 
