@@ -8,6 +8,9 @@ export class License{
     
     @Column()
         planId: string;
+    
+    @Column({ nullable: true })
+        plan: string;
 
     @Column()
         key: string;
@@ -21,9 +24,10 @@ export class License{
     @ManyToOne(() => User, user => user.licenses)
         user: User;
 
-    constructor(id: string, plan: string, key: string, lastVal: Date, ip: string, user: User, ){
+    constructor(id: string, planId: string, plan: string, key: string, lastVal: Date, ip: string, user: User, ){
         this.licenseId = id;
-        this.planId = plan;
+        this.planId = planId;
+        this.plan = plan;
         this.key = key;
         this.lastValidation = lastVal;
         this.user = user;
