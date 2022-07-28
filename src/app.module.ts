@@ -12,6 +12,7 @@ import { DiscordModule } from './discord/discord.module';
 import { APP_GUARD } from '@nestjs/core';
 import { ProfileModule } from './profile/profile.module';
 import { LogModule } from './log/log.module';
+import { CoreModule } from './core/core.module';
 
 @Module({
     imports: [
@@ -26,6 +27,7 @@ import { LogModule } from './log/log.module';
         }),
         ProfileModule,
         LogModule,
+        CoreModule,
     ],
     controllers: [],
     providers: [
