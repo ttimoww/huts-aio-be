@@ -2,5 +2,9 @@
     "successPointsRewards": {
         "freeMonth": 75,
         "chefRole": 200
+    },
+    "webhookStyles": {
+        "icon": "https://i.imgur.com/czpy4Bq.png",
+        "color": "#6366F1"
     }
 }
