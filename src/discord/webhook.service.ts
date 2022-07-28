@@ -20,6 +20,10 @@ import { Store } from 'src/lib/enums/store.enum';
 import { ModuleErrorLog } from 'src/log/entities/module-error-log.entity';
 import { Log } from 'src/log/entities/log.entity';
 
+// Config
+import * as config from 'config';
+const webhookStyles = config.get('webhookStyles');
+
 // Dictionary to format the store name
 const storeDictionary = {
     [Store.LVR]: 'Luisaviaroma',
@@ -79,7 +83,7 @@ export class WebhookService {
         try {
             const channel = this.discordClient.channels.cache.get(process.env.DISC_PUBLIC_SUCCESS_CHANNEL) as TextChannel;
             const embed = new MessageEmbed()
-                .setColor('#6366F1')
+                .setColor(webhookStyles.color)
                 .setTitle('HutsAIO delivered 🥶')
                 .setThumbnail(checkout.productImage)
                 .addFields(
@@ -90,7 +94,7 @@ export class WebhookService {
                     { name: 'User', value: user.discordTag, inline: true },
                 )
                 .setTimestamp()
-                .setFooter({ text: 'HutsAIO', iconURL: 'https://i.imgur.com/jfxiS00.jpeg' });
+                .setFooter({ text: 'HutsAIO', iconURL: webhookStyles.icon });
 
             channel.send({ embeds: [embed] });
         } catch (err) {
@@ -111,7 +115,7 @@ export class WebhookService {
             
             const webhookClient = new WebhookClient({ url: webhook.url });
             const embed = new MessageEmbed()
-                .setColor('#6366F1')
+                .setColor(webhookStyles.color)
                 .setTitle('HutsAIO delivered 🥶')
                 .setThumbnail(checkout.productImage)
                 .addFields(
@@ -121,7 +125,7 @@ export class WebhookService {
                     { name: 'Store', value: storeDictionary[checkout.store], inline: true },
                 )
                 .setTimestamp()
-                .setFooter({ text: 'HutsAIO', iconURL: 'https://i.imgur.com/jfxiS00.jpeg' });
+                .setFooter({ text: 'HutsAIO', iconURL: webhookStyles.icon });
 
             if (checkout.orderId) embed.addField('Order ID', `||${checkout.orderId}||`, true);
             if (checkout.account) embed.addField('Account', `||${checkout.account}||`, true);
@@ -156,7 +160,7 @@ export class WebhookService {
                     { name: 'Info', value: '```' + moduleErrorLog.extraInfo + '```', inline: true },
                 )
                 .setTimestamp()
-                .setFooter({ text: 'HutsAIO', iconURL: 'https://i.imgur.com/jfxiS00.jpeg' });
+                .setFooter({ text: 'HutsAIO', iconURL: webhookStyles.icon });
             channel.send({ embeds: [embed] });
         }
     }

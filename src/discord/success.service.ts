@@ -15,6 +15,7 @@ import { UserService } from 'src/user/user.service';
 // Config
 import * as config from 'config';
 const successPointsRewards = config.get('successPointsRewards');
+const webhookStyles = config.get('webhookStyles');
 
 
 @Injectable()
@@ -78,11 +79,11 @@ export class SuccessService {
         const [previousPoints, points] = await this.userService.mutateSuccessPoints(msg.author.id, 'add', 1);
 
         const embed = new MessageEmbed()
-            .setColor('#6366F1')
+            .setColor(webhookStyles.color)
             .setTitle('Your tweet was posted! React with :wastebasket: to delete')
-            .setDescription(`We've added 1 succes point to your account, you now have a total of ${points} points.`)
+            .setDescription(`We've added 1 success point to your account, you now have a total of ${points} points.`)
             .setTimestamp()
-            .setFooter({ text: 'HutsAIO', iconURL: `https://i.imgur.com/cXu8bLX.png?author=${msg.member.id}&tweetId=${tweet.id_str}` });
+            .setFooter({ text: 'HutsAIO', iconURL: `${webhookStyles.icon}?author=${msg.member.id}&tweetId=${tweet.id_str}` });
                 
         msg.channel.send({ embeds: [embed] }).then(msg => msg.react('🗑'));
 
@@ -103,11 +104,11 @@ export class SuccessService {
 
         if (!tweetId) {
             const embed = new MessageEmbed()
-                .setColor('#6366F1')
+                .setColor(webhookStyles.color)
                 .setTitle('Invalid tweet')
                 .setDescription('Please double check the provided link!')
                 .setTimestamp()
-                .setFooter({ text: 'HutsAIO', iconURL: 'https://i.imgur.com/cXu8bLX.png' });
+                .setFooter({ text: 'HutsAIO', iconURL: webhookStyles.icon });
                 
             msg.channel.send({ embeds: [embed] });
             return;
@@ -124,26 +125,27 @@ export class SuccessService {
         const tagged = tweet.entities.user_mentions.some(tag => tag.screen_name === 'HutsAIO' || tag.screen_name === 'HutsSuccess');
         if (!tagged){
             const embed = new MessageEmbed()
-                .setColor('#6366F1')
+                .setColor(webhookStyles.color)
                 .setTitle('Your tweet doesn\'t tag us')
                 .setDescription('Make sure to tag @HutsAIO when posting your success!')
                 .setTimestamp()
-                .setFooter({ text: 'HutsAIO', iconURL: 'https://i.imgur.com/cXu8bLX.png' });
+                .setFooter({ text: 'HutsAIO', iconURL: webhookStyles.icon });
      
             msg.channel.send({ embeds: [embed] });
             return;
         }
 
-        await this.twit.post('statuses/retweet/:id', { id: tweetId[1] });
+        await this.twit.post('statuses/retweet/:id', { id: tweetId[1] }).catch(() => { /* do nothing */ });
 
-        const [previousPoints, points] = await this.userService.mutateSuccessPoints(msg.author.tag, 'add', 2);
+        const [previousPoints, points] = await this.userService.mutateSuccessPoints(msg.author.id, 'add', 2);
+        await msg.member.setNickname(`${msg.author.username} (${points})`).catch(() => { /* do nothing */ });
 
         const embed = new MessageEmbed()
-            .setColor('#6366F1')
+            .setColor(webhookStyles.color)
             .setTitle('Thank you for tweeting your success')
             .setDescription(`We've added 2 succes points to your account, you now have a total of ${points} points.`)
             .setTimestamp()
-            .setFooter({ text: 'HutsAIO', iconURL: 'https://i.imgur.com/cXu8bLX.png' });
+            .setFooter({ text: 'HutsAIO', iconURL: webhookStyles.icon });
 
         msg.channel.send({ embeds: [embed] });
         this.checkRewards(previousPoints, points, msg);
@@ -166,21 +168,21 @@ export class SuccessService {
     
         if (msgOwner !== user.id) return;
 
-        await this.twit.post('statuses/destroy/:id', { id: tweetId });
+        await this.twit.post('statuses/destroy/:id', { id: tweetId }).catch(() => { /* do nothing */ });
         
         // eslint-disable-next-line @typescript-eslint/no-unused-vars
         const [previousPoints, points] = await this.userService.mutateSuccessPoints(user.id, 'substract', 1);
+        await msg.message.member.setNickname(`${msg.message.author.username} (${points})`).catch(() => { /* do nothing */ });
 
         const embed = new MessageEmbed()
-            .setColor('#6366F1')
+            .setColor(webhookStyles.color)
             .setTitle('Your tweet was deleted!')
             .setDescription(`You now have a total of ${points} points.`)
             .setTimestamp()
-            .setFooter({ text: 'HutsAIO', iconURL: 'https://i.imgur.com/cXu8bLX.png' });
+            .setFooter({ text: 'HutsAIO', iconURL: webhookStyles.icon });
                
         msg.message.edit({ embeds: [embed] });
         this.logger.verbose(`${user.tag} deleted his success image`);
-
     }
 
     /**
@@ -195,11 +197,11 @@ export class SuccessService {
         // Free month
         if (previousPoints < freeMonth && points >= freeMonth){
             const embed = new MessageEmbed()
-                .setColor('#6366F1')
+                .setColor(webhookStyles.color)
                 .setTitle(`:tada: Ding Dong! ${msg.author.tag} earned a free month! :tada:`)
                 .setDescription(`<@${msg.author.id}> please open a ticket to claim.`)
                 .setTimestamp()
-                .setFooter({ text: 'HutsAIO', iconURL: 'https://i.imgur.com/cXu8bLX.png' });
+                .setFooter({ text: 'HutsAIO', iconURL: webhookStyles.icon });
 
             msg.channel.send({ embeds: [embed] });
         }
@@ -207,11 +209,11 @@ export class SuccessService {
         // Chef role
         else if (previousPoints < chefRole && points >= chefRole){
             const embed = new MessageEmbed()
-                .setColor('#6366F1')
+                .setColor(webhookStyles.color)
                 .setTitle(`:tada: Ding Dong! ${msg.author.tag} earned the chef role! :tada:`)
                 .setDescription(`<@${msg.author.id}> please open a ticket to claim.`)
                 .setTimestamp()
-                .setFooter({ text: 'HutsAIO', iconURL: 'https://i.imgur.com/cXu8bLX.png' });
+                .setFooter({ text: 'HutsAIO', iconURL: webhookStyles.icon });
 
             msg.channel.send({ embeds: [embed] });
         }
