@@ -22,6 +22,7 @@ import { Log } from 'src/log/entities/log.entity';
 
 // Config
 import * as config from 'config';
+import { Update } from 'src/core/entities/update.entity';
 const webhookStyles = config.get('webhookStyles');
 
 // Dictionary to format the store name
@@ -59,12 +60,21 @@ export class WebhookService {
         return await this.webhookRepository.save({ url: webhookDto.url, user: user });
     }
 
+    /**
+     * Delete a saved webhook from an User
+     * @param user The user to delete the webhook url from
+     */
     async delete(user: User): Promise<boolean>{
         const res = await this.webhookRepository.delete({ user: user });
         return !!res.affected;
     }
 
-    async send(user: User, checkout: CheckoutDto): Promise<void>{
+    /**
+     * Send the public and private checkout webhooks
+     * @param user The User who made the checkout
+     * @param checkout The actual checkout
+     */
+    async sendCheckout(user: User, checkout: CheckoutDto): Promise<void>{
         this.sendPublicSuccessWebhook(user, checkout);
         this.sendPrivateSuccessWebhook(user, checkout);
     }
@@ -163,5 +173,46 @@ export class WebhookService {
                 .setFooter({ text: 'HutsAIO', iconURL: webhookStyles.icon });
             channel.send({ embeds: [embed] });
         }
+    }
+
+    /**
+     * Creates an update embed 
+     * @param update The update info
+     * @param notes The additional notes
+     * @param image The additional image
+     */
+    public createUpdateWebhook(update: Update, notes?: string, image?: string): MessageEmbed{
+        let description = '**Changelog**\n';
+
+        // Add changelog
+        let changelog = '';
+        update.changelog.forEach(u => changelog = changelog + '- ' + u + '\n');
+        description = description + changelog + '\n';
+
+        // Add notes
+        if (notes) description = description + `**Notes**\n${notes}\n\n`;
+        
+        // Add download
+        description = description + '**Download**\nCheck out the HutsAIO Hub';
+
+        const embed = new MessageEmbed()
+            .setColor(webhookStyles.color)
+            .setTitle(`HutsAIO Version ${update.version}`)
+            .setDescription(description)
+            .setTimestamp()
+            .setFooter({ text: 'HutsAIO - ' + update.version, iconURL: webhookStyles.icon });
+
+        if (image) embed.setImage(image);
+        return embed;
+    }
+
+    /**
+     * Send an webhook (embed) to a specific channel
+     * @param channelId Channel to send the webhook to
+     * @param embed The embed to send
+     */
+    public sendAnyWebhook(channelId: string, embed: MessageEmbed){
+        const channel = this.discordClient.channels.cache.get(channelId) as TextChannel;
+        channel.send({ embeds: [embed] });
     }
 }
