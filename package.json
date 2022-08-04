@@ -25,7 +25,9 @@
     "typeorm": "node --require ts-node/register ./node_modules/typeorm/cli.js"
   },
   "dependencies": {
+    "@discord-nestjs/common": "^2.3.0",
     "@discord-nestjs/core": "^3.3.1",
+    "@discordjs/builders": "^0.13.0",
     "@nestjs/axios": "^0.0.7",
     "@nestjs/cli": "^8.0.0",
     "@nestjs/common": "^8.0.0",

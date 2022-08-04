@@ -15,4 +15,8 @@ export class UpdateService {
     public async getLastUpdate(): Promise<Update>{
         return await this.updateRepository.findOne({ order: { updateId: 'DESC' } });
     }
+
+    public async save(update: Update): Promise<Update>{
+        return await this.updateRepository.save(update);
+    }
 }

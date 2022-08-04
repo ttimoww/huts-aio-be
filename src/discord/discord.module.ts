@@ -8,7 +8,7 @@ import { HttpModule, HttpService } from '@nestjs/axios';
 import { SuccessGateway } from './success.gateway';
 
 // Commands
-import { LeaderboardCommand } from './commands/leaderboard.command';
+import { UpdateCommand } from './commands/update.command';
 
 // Controllers
 import { WebhookController } from './webhook.controller';
@@ -26,6 +26,7 @@ import { UserModule } from 'src/user/user.module';
 
 // Twitter
 import Twit = require('twit')
+import { CoreModule } from 'src/core/core.module';
 
 @Module({
     imports: [
@@ -40,7 +41,8 @@ import Twit = require('twit')
         }),
         TypeOrmModule.forFeature([Webhook]),
         HttpModule,
-        UserModule
+        UserModule,
+        CoreModule
     ],
     providers: [{
         provide: SuccessService,
@@ -58,7 +60,7 @@ import Twit = require('twit')
         },
         inject: [HttpService, UserService]
     },
-    LeaderboardCommand, SuccessGateway, WebhookService],
+    UpdateCommand, SuccessGateway, WebhookService],
     exports: [WebhookService],
     controllers: [WebhookController]
 })

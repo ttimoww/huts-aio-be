@@ -58,7 +58,7 @@ export class CheckoutService {
             else body.productImage = 'https://i.imgur.com/cXu8bLX.png';
         }
 
-        this.webhookService.send(user, body);
+        this.webhookService.sendCheckout(user, body);
         try {
             const checkout = await this.checkoutRepository.save(new Checkout(body, user));   
             return checkout;
