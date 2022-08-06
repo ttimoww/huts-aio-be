@@ -171,6 +171,8 @@ export class WebhookService {
                 )
                 .setTimestamp()
                 .setFooter({ text: 'HutsAIO', iconURL: webhookStyles.icon });
+            if (log.url) embed.addField('URL', `[${log.url}](${log.url})`);
+
             channel.send({ embeds: [embed] });
         }
     }
@@ -193,7 +195,7 @@ export class WebhookService {
         if (notes) description = description + `**Notes**\n${notes}\n\n`;
         
         // Add download
-        description = description + '**Download**\nCheck out the HutsAIO Hub';
+        description = description + '**Download**\nDownload the HutsAIO Hub to install or auto update to this new version';
 
         const embed = new MessageEmbed()
             .setColor(webhookStyles.color)
