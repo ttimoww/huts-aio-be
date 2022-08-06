@@ -14,6 +14,9 @@ export class ModuleErrorLog extends Log{
 
     @Column()
         extraInfo: string;
+    
+    @Column({ nullable: true })
+        url: string;
 
     constructor(dto: ModuleErrogLogDto, user: User){
         super(user);
@@ -21,6 +24,7 @@ export class ModuleErrorLog extends Log{
         if (dto === undefined) return;
 
         this.store = dto.store;
+        this.url = dto.url;
         this.error = dto.error;
         this.extraInfo = dto.extraInfo;
     }
