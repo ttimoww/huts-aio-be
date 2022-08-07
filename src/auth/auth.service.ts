@@ -51,7 +51,7 @@ export class AuthService {
             return new HyperKeyData(
                 data.user.discord.username, 
                 data.user.discord.id, 
-                data.user.photo_url,
+                data.user.photo_url || 'https://i.imgur.com/czpy4Bq.png',
                 data.email,
                 data.plan.id,
                 data.plan.name,
@@ -165,6 +165,7 @@ export class AuthService {
              */
             license.lastValidation = new Date();
             license.ip = ip;
+            license.plan = keyData.plan;
             await this.licenseRepository.save(license);
 
             /**
