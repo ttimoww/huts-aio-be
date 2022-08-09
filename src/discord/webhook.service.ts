@@ -33,6 +33,7 @@ const storeDictionary = {
     [Store.Zalando]: 'Zalando',
     [Store.Kith]: 'Kith EU',
     [Store.Supreme]: 'Supreme',
+    [Store.NewBalance]: 'New Balance',
 };
 @Injectable()
 export class WebhookService {
@@ -89,7 +90,7 @@ export class WebhookService {
             this.logger.warn('No public success channel id found');
             return;
         }
-        
+
         try {
             const channel = this.discordClient.channels.cache.get(process.env.DISC_PUBLIC_SUCCESS_CHANNEL) as TextChannel;
             const embed = new MessageEmbed()
