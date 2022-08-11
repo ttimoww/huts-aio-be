@@ -14,7 +14,7 @@ import { UpdateCommandDto } from '../dto/update.command.dto';
 
 // Services
 import { UpdateService } from 'src/core/update.service';
-import { WebhookService } from '../webhook.service';
+import { WebhookService } from '../services/webhook.service';
 
 // Entities
 import { Update } from 'src/core/entities/update.entity';
