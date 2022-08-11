@@ -5,17 +5,17 @@ import { Intents } from 'discord.js';
 import { HttpModule, HttpService } from '@nestjs/axios';
 
 // Gateways
-import { SuccessGateway } from './success.gateway';
+import { SuccessGateway } from './gateways/success.gateway';
 
 // Commands
 import { UpdateCommand } from './commands/update.command';
 
 // Controllers
-import { WebhookController } from './webhook.controller';
+import { WebhookController } from './controllers/webhook.controller';
 
 // Services
-import { WebhookService } from './webhook.service';
-import { SuccessService } from './success.service';
+import { WebhookService } from './services/webhook.service';
+import { SuccessService } from './services/success.service';
 import { UserService } from 'src/user/user.service';
 
 // Entities
@@ -27,6 +27,8 @@ import { UserModule } from 'src/user/user.module';
 // Twitter
 import Twit = require('twit')
 import { CoreModule } from 'src/core/core.module';
+import { RoleSelectionGateway } from './gateways/role-selection.gateway';
+import { RoleSelectionService } from './services/role-selection.service';
 
 @Module({
     imports: [
@@ -60,7 +62,7 @@ import { CoreModule } from 'src/core/core.module';
         },
         inject: [HttpService, UserService]
     },
-    UpdateCommand, SuccessGateway, WebhookService],
+    UpdateCommand, SuccessGateway, WebhookService, RoleSelectionGateway, RoleSelectionService],
     exports: [WebhookService],
     controllers: [WebhookController]
 })
