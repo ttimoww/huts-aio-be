@@ -4,11 +4,11 @@ import { ApiBearerAuth, ApiBody, ApiOkResponse, ApiTags } from '@nestjs/swagger'
 
 // Dto's
 import { SuccessDto } from 'src/lib/dto/success.dto';
-import { WebhookDto } from './dto/webhook.dto';
+import { WebhookDto } from '../dto/webhook.dto';
 
 // Interfaces
 import { IRequestWithUser } from 'src/lib/interfaces/request-with-user.interface';
-import { WebhookService } from './webhook.service';
+import { WebhookService } from '../services/webhook.service';
 
 @Controller('webhook')
 @ApiTags('webhook')

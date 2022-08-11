@@ -12,7 +12,7 @@ import { CheckoutDto } from './checkout.dto';
 import { SuccessDto } from 'src/lib/dto/success.dto';
 
 // Service
-import { WebhookService } from 'src/discord/webhook.service';
+import { WebhookService } from 'src/discord/services/webhook.service';
 import { Store } from 'src/lib/enums/store.enum';
 
 @Injectable()

@@ -1,8 +1,8 @@
 import { Injectable, Logger } from '@nestjs/common';
 import { On, Once, InjectDiscordClient, UseGuards } from '@discord-nestjs/core';
 import { Client, ClientUser, Message, MessageReaction } from 'discord.js';
-import { SuccessChannelGuard } from './guards/success-channel.guard';
-import { SuccessService } from './success.service';
+import { ChannelGuard } from '../guards/channel.guard';
+import { SuccessService } from '../services/success.service';
 
 @Injectable()
 export class SuccessGateway {
@@ -19,7 +19,7 @@ export class SuccessGateway {
         this.logger.log(`Bot ${this.discordClient.user.tag} was started!`);
     }
 
-    @UseGuards(SuccessChannelGuard)
+    @UseGuards(ChannelGuard(process.env.DISC_SUCCESS_POST_CHANNEL))
     @On('messageCreate')
     async onMessage(msg: Message): Promise<void> {
         if (!msg.author.bot) {
@@ -27,7 +27,7 @@ export class SuccessGateway {
         }
     }
 
-    @UseGuards(SuccessChannelGuard)
+    @UseGuards(ChannelGuard(process.env.DISC_SUCCESS_POST_CHANNEL))
     @On('messageReactionAdd')
     async onReact(msg: MessageReaction, user: ClientUser): Promise<void> {
         if (!user.bot){

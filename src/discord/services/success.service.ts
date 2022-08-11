@@ -172,8 +172,7 @@ export class SuccessService {
         
         // eslint-disable-next-line @typescript-eslint/no-unused-vars
         const [previousPoints, points] = await this.userService.mutateSuccessPoints(user.id, 'substract', 1);
-        await msg.message.member.setNickname(`${msg.message.author.username} (${points})`).catch(() => { /* do nothing */ });
-
+        
         const embed = new MessageEmbed()
             .setColor(webhookStyles.color)
             .setTitle('Your tweet was deleted!')
