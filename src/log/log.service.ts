@@ -9,7 +9,7 @@ import ModuleErrogLogDto from './dto/module-error-log.dto';
 // Entities
 import { ModuleErrorLog } from './entities/module-error-log.entity';
 import { User } from 'src/user/entities/user.entity';
-import { WebhookService } from 'src/discord/webhook.service';
+import { WebhookService } from 'src/discord/services/webhook.service';
 
 @Injectable()
 export class LogService {

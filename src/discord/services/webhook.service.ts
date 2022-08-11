@@ -9,11 +9,11 @@ import { Client, MessageEmbed, TextChannel, WebhookClient } from 'discord.js';
 
 // Dto
 import { CheckoutDto } from 'src/checkout/checkout.dto';
-import { WebhookDto } from './dto/webhook.dto';
+import { WebhookDto } from '../dto/webhook.dto';
 
 // Entities
 import { User } from 'src/user/entities/user.entity';
-import { Webhook } from './entities/webhook.entity';
+import { Webhook } from '../entities/webhook.entity';
 
 // Enums
 import { Store } from 'src/lib/enums/store.enum';
