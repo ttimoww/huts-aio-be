@@ -17,7 +17,6 @@ import * as config from 'config';
 const successPointsRewards = config.get('successPointsRewards');
 const webhookStyles = config.get('webhookStyles');
 
-
 @Injectable()
 export class SuccessService {
     private logger = new Logger('SuccessService');

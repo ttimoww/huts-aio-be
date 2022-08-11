@@ -27,6 +27,8 @@ import { UserModule } from 'src/user/user.module';
 // Twitter
 import Twit = require('twit')
 import { CoreModule } from 'src/core/core.module';
+import { RoleSelectionGateway } from './gateways/role-selection.gateway';
+import { RoleSelectionService } from './services/role-selection.service';
 
 @Module({
     imports: [
@@ -60,7 +62,7 @@ import { CoreModule } from 'src/core/core.module';
         },
         inject: [HttpService, UserService]
     },
-    UpdateCommand, SuccessGateway, WebhookService],
+    UpdateCommand, SuccessGateway, WebhookService, RoleSelectionGateway, RoleSelectionService],
     exports: [WebhookService],
     controllers: [WebhookController]
 })
