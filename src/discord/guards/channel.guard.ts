@@ -1,8 +1,8 @@
-import { mixin } from '@nestjs/common';
 import { DiscordGuard } from '@discord-nestjs/core';
+import { mixin, Type } from '@nestjs/common';
 import { Message, MessageReaction } from 'discord.js';
 
-export const ChannelGuard = (allowedChannelId: string) => {
+export const ChannelGuard = (allowedChannelId: string): Type<DiscordGuard> => {
     class ChannelGuardMixin implements DiscordGuard {
         canActive(event: 'messageCreate' | 'messageReactionAdd', [message]: [Message | MessageReaction]): boolean {
             let channelId;
