@@ -19,7 +19,7 @@ const webhookStyles = config.get('webhookStyles');
 
 @Injectable()
 export class SuccessService {
-    private logger = new Logger('SuccessService');
+    private logger = new Logger(SuccessService.name);
 
     constructor(
         private readonly twit: Twit,

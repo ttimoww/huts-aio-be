@@ -25,6 +25,9 @@ export class User{
     @Column({ default: 0 })
         successPoints: number;
 
+    @Column({ default: false })
+        isTester: boolean;
+
     @OneToMany(() => License, license => license.user)
         licenses: License[];
 

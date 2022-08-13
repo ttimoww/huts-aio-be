@@ -17,11 +17,11 @@ export class UserService {
         private readonly webhookRepository: Repository<Webhook>,
     ){}
 
-    async findOne(filter: FindOneOptions<User>): Promise<User> {
+    public async findOne(filter: FindOneOptions<User>): Promise<User> {
         return this.userRepository.findOne(filter);
     }
 
-    async save(user: User): Promise<User> {
+    public async save(user: User): Promise<User> {
         return this.userRepository.save(user);
     }
 
@@ -32,7 +32,7 @@ export class UserService {
      * @param amount Amount
      * @returns previous points and current points
      */
-    async mutateSuccessPoints(discordId: string, type: 'add' | 'substract', amount: number): Promise<[number, number]>{
+    public async mutateSuccessPoints(discordId: string, type: 'add' | 'substract', amount: number): Promise<[number, number]>{
         const user = await this.userRepository.findOneOrFail({ where: { discordId: discordId } });
         const previousPoints = user.successPoints;
 
@@ -51,7 +51,7 @@ export class UserService {
      * @param user The user to get the webhook from
      * @returns The Webhook
      */
-    async findWebhook(user: User): Promise<Webhook> {
+    public async findWebhook(user: User): Promise<Webhook> {
         return this.webhookRepository.findOne({ where: { user: user } });
     }
 
@@ -61,7 +61,7 @@ export class UserService {
      * @param webhookDto The Webhook data 
      * @returns The Webhook
      */
-    async saveWebhook(user: User, webhookDto: WebhookDto): Promise<Webhook> {
+    public async saveWebhook(user: User, webhookDto: WebhookDto): Promise<Webhook> {
         const webhook = await this.webhookRepository.findOne({ where: { user: user } });
 
         if (webhook) {
@@ -76,8 +76,21 @@ export class UserService {
      * Delete a saved webhook from an User
      * @param user The user to delete the Webhook from
      */
-    async deleteWebhook(user: User): Promise<boolean>{
+    public async deleteWebhook(user: User): Promise<boolean>{
         const res = await this.webhookRepository.delete({ user: user });
         return !!res.affected;
+    }
+
+    /**
+     * Toggle the tester flag to an specific User
+     * @param discordId The discord ID of the user
+     * @param isTester The new flag value
+     * @returns Wheter the operation succeeded or not
+     */
+    public async toggleTesterFlag(discordId: string, isTester: boolean): Promise<boolean>{
+        const user = await this.userRepository.findOneOrFail({ where: { discordId: discordId } });
+        user.isTester = isTester;
+        const res = await this.userRepository.save(user);
+        return !!res;
     }
 }

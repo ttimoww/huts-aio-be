@@ -43,12 +43,13 @@ export class AuthController {
             discordTag: license.user.discordTag,
             email: license.user.email,
             plan: license.plan,
-            key: license.key
+            key: license.key,
+            isTester: license.user.isTester
         };
     }
 
   @ApiBearerAuth()
-  @ApiOkResponse({ type: UserDto })
+  @ApiOkResponse({ type: SuccessDto })
   @Get('/check-token')
   checkToken(): SuccessDto {
       return { success: true };
