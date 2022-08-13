@@ -1,6 +1,6 @@
 import { License } from '../../auth/license.entity';
 import HyperKeyData from '../../auth/models/hyper-key-data.model';
-import { User } from '../../user/entities/user.entity';
+import { User } from '../../user/user.entity';
 
 export function fakeHyperKeyData(): HyperKeyData{
     return new HyperKeyData(
