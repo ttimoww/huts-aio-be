@@ -1,19 +1,15 @@
 // NestJS Dependencies
 import { InjectDiscordClient } from '@discord-nestjs/core';
 import { Injectable, Logger } from '@nestjs/common';
-import { InjectRepository } from '@nestjs/typeorm';
-import { Repository, FindOneOptions } from 'typeorm';
 
 // Discord
 import { Client, MessageEmbed, TextChannel, WebhookClient } from 'discord.js';
 
 // Dto
 import { CheckoutDto } from 'src/checkout/checkout.dto';
-import { WebhookDto } from '../dto/webhook.dto';
 
 // Entities
-import { User } from 'src/user/entities/user.entity';
-import { Webhook } from '../entities/webhook.entity';
+import { User } from 'src/user/user.entity';
 
 // Enums
 import { Store } from 'src/lib/enums/store.enum';
@@ -23,6 +19,7 @@ import { Log } from 'src/log/entities/log.entity';
 // Config
 import * as config from 'config';
 import { Update } from 'src/core/entities/update.entity';
+import { UserService } from 'src/user/user.service';
 const webhookStyles = config.get('webhookStyles');
 
 // Dictionary to format the store name
@@ -36,39 +33,14 @@ const storeDictionary = {
     [Store.NewBalance]: 'New Balance',
 };
 @Injectable()
-export class WebhookService {
-    private logger = new Logger('WebhookService');
+export class EmbedService {
+    private logger = new Logger(EmbedService.name);
 
     constructor(
-        @InjectRepository(Webhook)
-        private readonly webhookRepository: Repository<Webhook>,
         @InjectDiscordClient()
         private readonly discordClient: Client,
+        private readonly userService: UserService
     ){}
-
-    async findOne(filter: FindOneOptions<Webhook>): Promise<Webhook> {
-        return this.webhookRepository.findOne(filter);
-    }
-
-    async save(user: User, webhookDto: WebhookDto): Promise<Webhook> {
-        const webhook = await this.webhookRepository.findOne({ where: { user: user } });
-
-        if (webhook) {
-            webhook.url = webhookDto.url;
-            return this.webhookRepository.save(webhook);
-        }
-
-        return await this.webhookRepository.save({ url: webhookDto.url, user: user });
-    }
-
-    /**
-     * Delete a saved webhook from an User
-     * @param user The user to delete the webhook url from
-     */
-    async delete(user: User): Promise<boolean>{
-        const res = await this.webhookRepository.delete({ user: user });
-        return !!res.affected;
-    }
 
     /**
      * Send the public and private checkout webhooks
@@ -76,8 +48,8 @@ export class WebhookService {
      * @param checkout The actual checkout
      */
     async sendCheckout(user: User, checkout: CheckoutDto): Promise<void>{
-        this.sendPublicSuccessWebhook(user, checkout);
-        this.sendPrivateSuccessWebhook(user, checkout);
+        this.sendPublicSuccessEmbed(user, checkout);
+        this.sendPrivateSuccessEmbed(user, checkout);
     }
 
     /**
@@ -85,7 +57,7 @@ export class WebhookService {
      * @param user The creator of the checkout
      * @param checkout Checkout details
      */
-    private async sendPublicSuccessWebhook(user: User, checkout: CheckoutDto): Promise<void>{
+    private async sendPublicSuccessEmbed(user: User, checkout: CheckoutDto): Promise<void>{
         if (!process.env.DISC_PUBLIC_SUCCESS_CHANNEL) {
             this.logger.warn('No public success channel id found');
             return;
@@ -107,7 +79,7 @@ export class WebhookService {
                 .setTimestamp()
                 .setFooter({ text: 'HutsAIO', iconURL: webhookStyles.icon });
 
-            channel.send({ embeds: [embed] });
+            await channel.send({ embeds: [embed] });
         } catch (err) {
             this.logger.error('Unable to send public webhook', err);
         }
@@ -119,9 +91,9 @@ export class WebhookService {
      * @param user The creator of the checkout
      * @param checkout Checkout details
      */
-    private async sendPrivateSuccessWebhook(user: User, checkout: CheckoutDto): Promise<void>{
+    private async sendPrivateSuccessEmbed(user: User, checkout: CheckoutDto): Promise<void>{
         try {
-            const webhook = await this.webhookRepository.findOne({ where: { user: user } });
+            const webhook = await this.userService.findWebhook(user);
             if (!webhook) return;
             
             const webhookClient = new WebhookClient({ url: webhook.url });
@@ -142,7 +114,7 @@ export class WebhookService {
             if (checkout.account) embed.addField('Account', `||${checkout.account}||`, true);
             if (checkout.paymentUrl) embed.addField('Payment URL', `[Click](${checkout.paymentUrl})`);
 
-            webhookClient.send({ embeds: [embed] });
+            await webhookClient.send({ embeds: [embed] });
         } catch (err) {
             this.logger.error(`Unable to send private webhook for ${user.discordTag}`, err);
         }
@@ -152,7 +124,7 @@ export class WebhookService {
      * Formats and sends the log in the Discord logs channel
      * @param log The log to send
      */
-    public async sendLogWebhook(log: Log): Promise<void>{
+    public async sendLogEmbed(log: Log): Promise<void>{
         if (!process.env.DISC_ERROR_LOG_CHANNEL) {
             this.logger.warn('No error channel id found');
             return;
@@ -184,7 +156,7 @@ export class WebhookService {
      * @param notes The additional notes
      * @param image The additional image
      */
-    public createUpdateWebhook(update: Update, notes?: string, image?: string): MessageEmbed{
+    public createUpdateEmbed(update: Update, notes?: string, image?: string): MessageEmbed{
         let description = '**Changelog**\n';
 
         // Add changelog
@@ -214,7 +186,7 @@ export class WebhookService {
      * @param channelId Channel to send the webhook to
      * @param embed The embed to send
      */
-    public sendAnyWebhook(channelId: string, embed: MessageEmbed){
+    public sendAnyEmbed(channelId: string, embed: MessageEmbed){
         const channel = this.discordClient.channels.cache.get(channelId) as TextChannel;
         channel.send({ embeds: [embed] });
     }

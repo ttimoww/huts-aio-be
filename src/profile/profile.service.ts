@@ -4,7 +4,7 @@ import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 
 // Entities
-import { User } from 'src/user/entities/user.entity';
+import { User } from 'src/user/user.entity';
 import { Profile } from './profile.entity';
 
 // Dto's

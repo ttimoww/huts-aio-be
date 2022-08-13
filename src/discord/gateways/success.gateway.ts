@@ -2,7 +2,7 @@ import { Injectable, Logger } from '@nestjs/common';
 import { On, Once, InjectDiscordClient, UseGuards } from '@discord-nestjs/core';
 import { Client, ClientUser, Message, MessageReaction } from 'discord.js';
 import { ChannelGuard } from '../guards/channel.guard';
-import { SuccessService } from '../services/success.service';
+import { SuccessService } from '../services/success-channel.service';
 
 @Injectable()
 export class SuccessGateway {
