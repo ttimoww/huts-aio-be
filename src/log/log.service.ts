@@ -8,8 +8,8 @@ import ModuleErrogLogDto from './dto/module-error-log.dto';
 
 // Entities
 import { ModuleErrorLog } from './entities/module-error-log.entity';
-import { User } from 'src/user/entities/user.entity';
-import { WebhookService } from 'src/discord/services/webhook.service';
+import { User } from 'src/user/user.entity';
+import { EmbedService } from 'src/discord/services/embed.service';
 
 @Injectable()
 export class LogService {
@@ -17,13 +17,13 @@ export class LogService {
     constructor(
         @InjectRepository(ModuleErrorLog)
         private readonly moduleErrorlogRepository: Repository<ModuleErrorLog>,
-        private readonly webhookService: WebhookService
+        private readonly webhookService: EmbedService
     ){}
 
     public async saveModuleErrorLog(user: User, dto: ModuleErrogLogDto): Promise<SuccessDto>{
         try {
             const log = await this.moduleErrorlogRepository.save(new ModuleErrorLog(dto, user));
-            this.webhookService.sendLogWebhook(log);
+            this.webhookService.sendLogEmbed(log);
             return { success: !!log };
         } catch (error) {
             this.logger.error('Unable to save new ModuleErrorLog', error);

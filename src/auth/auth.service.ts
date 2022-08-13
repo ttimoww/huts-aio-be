@@ -9,10 +9,10 @@ import * as requestIp from 'request-ip';
 import { Repository } from 'typeorm';
 
 // Services
-import { UserService } from './../user/user.service';
+import { UserService } from '../user/user.service';
 
 // Entities
-import { User } from '../user/entities/user.entity';
+import { User } from '../user/user.entity';
 import { License } from './license.entity';
 
 // Models
