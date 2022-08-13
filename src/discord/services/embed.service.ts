@@ -182,6 +182,18 @@ export class EmbedService {
     }
 
     /**
+     * Get a blank Embed in HutsAIO theme
+     * @returns Blank Embed with HutsAIO theme
+     */
+    public getEmbedBase(): MessageEmbed{
+        return new MessageEmbed()
+            .setColor(webhookStyles.color)
+            .setTitle('HutsAIO')
+            .setTimestamp()
+            .setFooter({ text: 'HutsAIO', iconURL: webhookStyles.icon });
+    }
+
+    /**
      * Send an webhook (embed) to a specific channel
      * @param channelId Channel to send the webhook to
      * @param embed The embed to send

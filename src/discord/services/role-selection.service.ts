@@ -8,26 +8,7 @@ import { Client, ClientUser, Guild, Message, MessageEmbed, MessageReaction, Role
 // Config
 import * as config from 'config';
 const webhookStyles = config.get('webhookStyles');
-
-const ROLES = [
-    {
-        roleName: 'Releases',
-        roleEmoji: '🟢'
-    }, 
-    {
-        roleName: 'Restocks',
-        roleEmoji: '🟡'
-    },
-    {
-        roleName: 'Giveaways',
-        roleEmoji: '🎁'
-    },
-    {
-        roleName: 'Partnerships',
-        roleEmoji: '🧑‍🤝‍🧑'
-    },
-
-];
+const roles = config.get('reactionRoles');
 
 @Injectable()
 export class RoleSelectionService {
@@ -52,7 +33,7 @@ export class RoleSelectionService {
             .setThumbnail(webhookStyles.icon)
             .setFooter({ text: 'HutsAIO', iconURL: `${webhookStyles.icon}?roleselection=${this.MESSAGE_ID}` });
     
-        ROLES.forEach(r => {
+        roles.forEach(r => {
             embed.setDescription(embed.description + `${r.roleEmoji} - ${r.roleName} \n`);
         });    
 
@@ -107,7 +88,7 @@ export class RoleSelectionService {
         /**
          * Add reactions
          */
-        ROLES.forEach(async r => await roleSelectionMessage.react(r.roleEmoji));
+        roles.forEach(async r => await roleSelectionMessage.react(r.roleEmoji));
     }
 
     /**
@@ -118,7 +99,7 @@ export class RoleSelectionService {
      */
     public async handleRoleMutation(msg: MessageReaction, user: ClientUser,  action: 'add' | 'remove'): Promise<void>{
         try {
-            const theRole = ROLES.find(r => r.roleEmoji === msg.emoji.name);
+            const theRole = roles.find(r => r.roleEmoji === msg.emoji.name);
         
             let role = await this.findRole(theRole.roleName, msg.message.guild);
             if (!role) {

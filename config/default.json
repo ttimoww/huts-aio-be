@@ -6,5 +6,27 @@
     "webhookStyles": {
         "icon": "https://i.imgur.com/czpy4Bq.png",
         "color": "#6366F1"
-    }
+    },
+    "testerRole": {
+        "name": "tester",
+        "color": "#e67e22"
+    },
+    "reactionRoles": [
+        {
+            "roleName": "Releases",
+            "roleEmoji": "🟢"
+        }, 
+        {
+            "roleName": "Restocks",
+            "roleEmoji": "🟡"
+        },
+        {
+            "roleName": "Giveaways",
+            "roleEmoji": "🎁"
+        },
+        {
+            "roleName": "Partnerships",
+            "roleEmoji": "🧑‍🤝‍🧑"
+        }
+    ]
 }
