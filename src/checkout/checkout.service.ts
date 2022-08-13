@@ -4,7 +4,7 @@ import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 
 // Entities
-import { User } from 'src/user/entities/user.entity';
+import { User } from 'src/user/user.entity';
 import { Checkout } from './checkout.entity';
 
 // Dto's
@@ -12,7 +12,7 @@ import { CheckoutDto } from './checkout.dto';
 import { SuccessDto } from 'src/lib/dto/success.dto';
 
 // Service
-import { WebhookService } from 'src/discord/services/webhook.service';
+import { EmbedService } from 'src/discord/services/embed.service';
 import { Store } from 'src/lib/enums/store.enum';
 
 @Injectable()
@@ -22,7 +22,7 @@ export class CheckoutService {
     constructor(
         @InjectRepository(Checkout)
         private readonly checkoutRepository: Repository<Checkout>,
-        private readonly webhookService: WebhookService
+        private readonly webhookService: EmbedService
     ){}
 
     /**

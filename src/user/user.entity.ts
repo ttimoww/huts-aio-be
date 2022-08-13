@@ -1,7 +1,7 @@
-import { Checkout } from './../../checkout/checkout.entity';
+import { Checkout } from '../checkout/checkout.entity';
 import { Entity, PrimaryGeneratedColumn, Column, OneToMany, OneToOne } from 'typeorm';
-import { License } from '../../auth/license.entity';
-import { Webhook } from 'src/discord/entities/webhook.entity';
+import { License } from '../auth/license.entity';
+import { Webhook } from './entities/webhook.entity';
 import { Profile } from 'src/profile/profile.entity';
 import { Log } from 'src/log/entities/log.entity';
 

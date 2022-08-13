@@ -1,5 +1,4 @@
 import { Module } from '@nestjs/common';
-import { TypeOrmModule } from '@nestjs/typeorm';
 import { DiscordModule as DiscModule } from '@discord-nestjs/core';
 import { Intents } from 'discord.js';
 import { HttpModule, HttpService } from '@nestjs/axios';
@@ -14,12 +13,9 @@ import { UpdateCommand } from './commands/update.command';
 import { WebhookController } from './controllers/webhook.controller';
 
 // Services
-import { WebhookService } from './services/webhook.service';
-import { SuccessService } from './services/success.service';
+import { EmbedService } from './services/embed.service';
+import { SuccessService } from './services/success-channel.service';
 import { UserService } from 'src/user/user.service';
-
-// Entities
-import { Webhook } from './entities/webhook.entity';
 
 // Modules
 import { UserModule } from 'src/user/user.module';
@@ -41,7 +37,6 @@ import { RoleSelectionService } from './services/role-selection.service';
                 },
             }),
         }),
-        TypeOrmModule.forFeature([Webhook]),
         HttpModule,
         UserModule,
         CoreModule
@@ -62,8 +57,8 @@ import { RoleSelectionService } from './services/role-selection.service';
         },
         inject: [HttpService, UserService]
     },
-    UpdateCommand, SuccessGateway, WebhookService, RoleSelectionGateway, RoleSelectionService],
-    exports: [WebhookService],
+    UpdateCommand, SuccessGateway, EmbedService, RoleSelectionGateway, RoleSelectionService],
+    exports: [EmbedService],
     controllers: [WebhookController]
 })
 export class DiscordModule {}

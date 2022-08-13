@@ -1,5 +1,5 @@
 import { Entity, PrimaryColumn, Column, ManyToOne } from 'typeorm';
-import { User } from '../user/entities/user.entity';
+import { User } from '../user/user.entity';
 
 @Entity()
 export class License{

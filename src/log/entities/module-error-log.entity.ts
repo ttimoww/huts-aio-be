@@ -2,7 +2,7 @@ import { Log } from './log.entity';
 import { ChildEntity, Column } from 'typeorm';
 import { Store } from 'src/lib/enums/store.enum';
 import ModuleErrogLogDto from '../dto/module-error-log.dto';
-import { User } from 'src/user/entities/user.entity';
+import { User } from 'src/user/user.entity';
 
 @ChildEntity()
 export class ModuleErrorLog extends Log{

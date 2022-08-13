@@ -14,7 +14,7 @@ import { UpdateCommandDto } from '../dto/update.command.dto';
 
 // Services
 import { UpdateService } from 'src/core/update.service';
-import { WebhookService } from '../services/webhook.service';
+import { EmbedService } from '../services/embed.service';
 
 // Entities
 import { Update } from 'src/core/entities/update.entity';
@@ -30,7 +30,7 @@ export class UpdateCommand implements DiscordTransformedCommand<UpdateCommandDto
     private logger = new Logger('UpdateCommand');
 
     constructor(
-        private readonly webhookService: WebhookService,
+        private readonly webhookService: EmbedService,
         private readonly updateService: UpdateService
     ){}
 
@@ -39,7 +39,7 @@ export class UpdateCommand implements DiscordTransformedCommand<UpdateCommandDto
         const CANCEL_BUTTON = 'cancel' + interaction.id;
 
         const update = new Update(dto);
-        const embed = this.webhookService.createUpdateWebhook(update, dto.notes, dto.image);
+        const embed = this.webhookService.createUpdateEmbed(update, dto.notes, dto.image);
 
         const row = new MessageActionRow().addComponents([
             new MessageButton()
@@ -76,7 +76,7 @@ export class UpdateCommand implements DiscordTransformedCommand<UpdateCommandDto
                 if (i.customId === RELEASE_BUTTON){
                     this.logger.verbose(`Saving new update (V${dto.version})`);
                     await this.updateService.save(update);
-                    await this.webhookService.sendAnyWebhook(process.env.DISC_UPDATES_CHANNEL, embed);
+                    await this.webhookService.sendAnyEmbed(process.env.DISC_UPDATES_CHANNEL, embed);
                     embed.setColor('#2ecc71');
                     await i.update({ components: [], embeds: [embed] });
                     await i.followUp(`Successfully released V${dto.version}`);
