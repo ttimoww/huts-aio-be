@@ -9,6 +9,9 @@ export class UserDto {
 
     @ApiProperty()
         discordImage: string;
+
+    @ApiProperty()
+        isTester: boolean;
         
     @ApiProperty()
         plan: string;
