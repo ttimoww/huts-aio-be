@@ -21,10 +21,10 @@ export class WebhookController {
     @ApiOkResponse({ type: WebhookDto })
     async setWebhook(@Res() res): Promise<WebhookDto> {
         /**
-         * We need 303 so the redirect will stay a POST (otherwise it will become a GET)
-         * See: https://stackoverflow.com/questions/33214717/why-post-redirects-to-get-and-put-redirects-to-put
+         * We need 307 so the redirect will stay a POST (otherwise it will become a GET)
+         * See: https://developer.mozilla.org/en-US/docs/Web/HTTP/Status/307
          */
-        return res.redirect('/user/webhook', 303);
+        return res.redirect('/user/webhook', 307);
 
     }
 
