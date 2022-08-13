@@ -20,7 +20,11 @@ export class WebhookController {
     @ApiBody({ type: WebhookDto })
     @ApiOkResponse({ type: WebhookDto })
     async setWebhook(@Res() res): Promise<WebhookDto> {
-        return res.redirect('/user/webhook');
+        /**
+         * We need 303 so the redirect will stay a POST (otherwise it will become a GET)
+         * See: https://stackoverflow.com/questions/33214717/why-post-redirects-to-get-and-put-redirects-to-put
+         */
+        return res.redirect('/user/webhook', 303);
 
     }
 
