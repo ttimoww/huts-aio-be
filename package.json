@@ -26,8 +26,7 @@
   },
   "dependencies": {
     "@discord-nestjs/common": "^2.3.0",
-    "@discord-nestjs/core": "^3.3.1",
-    "@discordjs/builders": "^0.13.0",
+    "@discord-nestjs/core": "^4.2.1",
     "@nestjs/axios": "^0.0.7",
     "@nestjs/cli": "^8.0.0",
     "@nestjs/common": "^8.0.0",
@@ -43,7 +42,7 @@
     "axios": "^0.27.2",
     "class-transformer": "^0.5.1",
     "config": "^3.3.7",
-    "discord.js": "^13.7.0",
+    "discord.js": "^14.2.0",
     "dotenv": "^16.0.0",
     "helmet": "^5.1.0",
     "install": "^0.13.0",

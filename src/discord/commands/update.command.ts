@@ -4,7 +4,7 @@ import { Injectable, Logger } from '@nestjs/common';
 // Discrod
 import { Command, UsePipes, Payload, DiscordTransformedCommand, UseGuards, TransformedCommandExecutionContext } from '@discord-nestjs/core';
 import { TransformPipe } from '@discord-nestjs/common';
-import { MessageActionRow, MessageButton } from 'discord.js';
+import { ActionRowBuilder, ButtonBuilder, ButtonStyle, EmbedBuilder } from 'discord.js';
 
 // Guards
 import { StaffOnlyGuard } from '../guards/staff-only.guard';
@@ -41,15 +41,15 @@ export class UpdateCommand implements DiscordTransformedCommand<UpdateCommandDto
         const update = new Update(dto);
         const embed = this.webhookService.createUpdateEmbed(update, dto.notes, dto.image);
 
-        const row = new MessageActionRow().addComponents([
-            new MessageButton()
+        const row = new ActionRowBuilder<ButtonBuilder>().addComponents([
+            new ButtonBuilder()
                 .setCustomId(RELEASE_BUTTON)
                 .setLabel('Release')
-                .setStyle('SUCCESS'),
-            new MessageButton()
+                .setStyle(ButtonStyle.Success),
+            new ButtonBuilder()
                 .setCustomId(CANCEL_BUTTON)
                 .setLabel('Cancel')
-                .setStyle('DANGER'),
+                .setStyle(ButtonStyle.Danger),
         ]);
 
         await interaction.reply({ embeds: [embed], components: [row] });

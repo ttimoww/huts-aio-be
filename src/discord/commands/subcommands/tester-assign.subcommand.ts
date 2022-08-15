@@ -21,13 +21,13 @@ export class TesterAssignSubCommand implements DiscordTransformedCommand<TesterC
         const embed = this.embedService.getEmbedBase();
 
         if (success) {
-            embed.title = '✅  Success';
-            embed.description = `Successfully **assigned** tester role to <@${dto.user}>`;
+            embed.setTitle('✅  Success');
+            embed.setDescription(`Successfully **assigned** tester role to <@${dto.user}>`);
             interaction.reply({ embeds: [embed] });
         }
         else{
-            embed.title = '❌ Error';
-            embed.description = `Unable to **assign** tester role to <@${dto.user}>`;
+            embed.setTitle('❌ Error');
+            embed.setDescription(`Unable to **assign** tester role to <@${dto.user}>`);
             interaction.reply({ embeds: [embed] });
         }
     }

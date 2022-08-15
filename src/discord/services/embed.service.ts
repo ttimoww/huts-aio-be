@@ -3,7 +3,7 @@ import { InjectDiscordClient } from '@discord-nestjs/core';
 import { Injectable, Logger } from '@nestjs/common';
 
 // Discord
-import { Client, MessageEmbed, TextChannel, WebhookClient } from 'discord.js';
+import { Client, EmbedBuilder, TextChannel, WebhookClient } from 'discord.js';
 
 // Dto
 import { CheckoutDto } from 'src/checkout/checkout.dto';
@@ -65,7 +65,7 @@ export class EmbedService {
 
         try {
             const channel = this.discordClient.channels.cache.get(process.env.DISC_PUBLIC_SUCCESS_CHANNEL) as TextChannel;
-            const embed = new MessageEmbed()
+            const embed = new EmbedBuilder()
                 .setColor(webhookStyles.color)
                 .setTitle('HutsAIO delivered 🥶')
                 .setThumbnail(checkout.productImage)
@@ -97,7 +97,7 @@ export class EmbedService {
             if (!webhook) return;
             
             const webhookClient = new WebhookClient({ url: webhook.url });
-            const embed = new MessageEmbed()
+            const embed = new EmbedBuilder()
                 .setColor(webhookStyles.color)
                 .setTitle('HutsAIO delivered 🥶')
                 .setThumbnail(checkout.productImage)
@@ -110,9 +110,9 @@ export class EmbedService {
                 .setTimestamp()
                 .setFooter({ text: 'HutsAIO', iconURL: webhookStyles.icon });
 
-            if (checkout.orderId) embed.addField('Order ID', `||${checkout.orderId}||`, true);
-            if (checkout.account) embed.addField('Account', `||${checkout.account}||`, true);
-            if (checkout.paymentUrl) embed.addField('Payment URL', `[Click](${checkout.paymentUrl})`);
+            if (checkout.orderId) embed.addFields([{ name: 'Order ID', value: `||${checkout.orderId}||`, inline: true }]);
+            if (checkout.account) embed.addFields([{ name: 'Account', value: `||${checkout.account}||`, inline: true }]);
+            if (checkout.paymentUrl) embed.addFields([{ name: 'Payment URL', value: `[Click](${checkout.paymentUrl})`, inline: true }]);
 
             await webhookClient.send({ embeds: [embed] });
         } catch (err) {
@@ -133,7 +133,7 @@ export class EmbedService {
         if (log instanceof ModuleErrorLog){
             const moduleErrorLog = log as ModuleErrorLog;
             const channel = this.discordClient.channels.cache.get(process.env.DISC_ERROR_LOG_CHANNEL) as TextChannel;
-            const embed = new MessageEmbed()
+            const embed = new EmbedBuilder()
                 .setColor('#e74c3c')
                 .setTitle('Module Error')
                 .addFields(
@@ -144,7 +144,7 @@ export class EmbedService {
                 )
                 .setTimestamp()
                 .setFooter({ text: 'HutsAIO', iconURL: webhookStyles.icon });
-            if (log.url) embed.addField('URL', `[${log.url}](${log.url})`);
+            if (log.url) embed.addFields({ name: 'URL', value: `[${log.url}](${log.url})` });
 
             channel.send({ embeds: [embed] });
         }
@@ -156,7 +156,7 @@ export class EmbedService {
      * @param notes The additional notes
      * @param image The additional image
      */
-    public createUpdateEmbed(update: Update, notes?: string, image?: string): MessageEmbed{
+    public createUpdateEmbed(update: Update, notes?: string, image?: string): EmbedBuilder{
         let description = '**Changelog**\n';
 
         // Add changelog
@@ -170,7 +170,7 @@ export class EmbedService {
         // Add download
         description = description + '**Download**\nDownload the HutsAIO Hub to install or auto update to this new version';
 
-        const embed = new MessageEmbed()
+        const embed = new EmbedBuilder()
             .setColor(webhookStyles.color)
             .setTitle(`HutsAIO Version ${update.version}`)
             .setDescription(description)
@@ -185,8 +185,8 @@ export class EmbedService {
      * Get a blank Embed in HutsAIO theme
      * @returns Blank Embed with HutsAIO theme
      */
-    public getEmbedBase(): MessageEmbed{
-        return new MessageEmbed()
+    public getEmbedBase(): EmbedBuilder{
+        return new EmbedBuilder()
             .setColor(webhookStyles.color)
             .setTitle('HutsAIO')
             .setTimestamp()
@@ -198,7 +198,7 @@ export class EmbedService {
      * @param channelId Channel to send the webhook to
      * @param embed The embed to send
      */
-    public sendAnyEmbed(channelId: string, embed: MessageEmbed){
+    public sendAnyEmbed(channelId: string, embed: EmbedBuilder){
         const channel = this.discordClient.channels.cache.get(channelId) as TextChannel;
         channel.send({ embeds: [embed] });
     }
