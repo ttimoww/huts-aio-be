@@ -19,9 +19,10 @@ export class SuccessGateway {
         this.logger.log(`Bot ${this.discordClient.user.tag} was started!`);
     }
 
-    @UseGuards(ChannelGuard(process.env.DISC_SUCCESS_POST_CHANNEL))
+    // @UseGuards(ChannelGuard(process.env.DISC_SUCCESS_POST_CHANNEL))
     @On('messageCreate')
     async onMessage(msg: Message): Promise<void> {
+        console.log(msg);
         if (!msg.author.bot) {
             this.successService.handleSuccessPost(msg);
         }
@@ -30,6 +31,7 @@ export class SuccessGateway {
     @UseGuards(ChannelGuard(process.env.DISC_SUCCESS_POST_CHANNEL))
     @On('messageReactionAdd')
     async onReact(msg: MessageReaction, user: ClientUser): Promise<void> {
+        console.log(msg);
         if (!user.bot){
             this.successService.removeTweet(msg, user);
         }

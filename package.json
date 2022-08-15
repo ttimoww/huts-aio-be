@@ -2,7 +2,7 @@
   "name": "huts-aio-be",
   "version": "0.0.1",
   "engines": {
-    "node": "16.x"
+    "node": "16.9"
   },
   "description": "",
   "author": "Timo Wernars",
