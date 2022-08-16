@@ -2,7 +2,7 @@ import { Injectable, Logger } from '@nestjs/common';
 import { HttpService } from '@nestjs/axios';
 
 // Discord
-import { ClientUser, Message, MessageEmbed, MessageReaction } from 'discord.js';
+import { ClientUser, Message, EmbedBuilder, MessageReaction } from 'discord.js';
 
 // Packages
 import Twit from 'twit';
@@ -77,7 +77,7 @@ export class SuccessService {
 
         const [previousPoints, points] = await this.userService.mutateSuccessPoints(msg.author.id, 'add', 1);
 
-        const embed = new MessageEmbed()
+        const embed = new EmbedBuilder()
             .setColor(webhookStyles.color)
             .setTitle('Your tweet was posted! React with :wastebasket: to delete')
             .setDescription(`We've added 1 success point to your account, you now have a total of ${points} points.`)
@@ -102,7 +102,7 @@ export class SuccessService {
         const tweetId = msg.content.match(tweetIdRegex);
 
         if (!tweetId) {
-            const embed = new MessageEmbed()
+            const embed = new EmbedBuilder()
                 .setColor(webhookStyles.color)
                 .setTitle('Invalid tweet')
                 .setDescription('Please double check the provided link!')
@@ -123,7 +123,7 @@ export class SuccessService {
 
         const tagged = tweet.entities.user_mentions.some(tag => tag.screen_name === 'HutsAIO' || tag.screen_name === 'HutsSuccess');
         if (!tagged){
-            const embed = new MessageEmbed()
+            const embed = new EmbedBuilder()
                 .setColor(webhookStyles.color)
                 .setTitle('Your tweet doesn\'t tag us')
                 .setDescription('Make sure to tag @HutsAIO when posting your success!')
@@ -139,7 +139,7 @@ export class SuccessService {
         const [previousPoints, points] = await this.userService.mutateSuccessPoints(msg.author.id, 'add', 2);
         await msg.member.setNickname(`${msg.author.username} (${points})`).catch(() => { /* do nothing */ });
 
-        const embed = new MessageEmbed()
+        const embed = new EmbedBuilder()
             .setColor(webhookStyles.color)
             .setTitle('Thank you for tweeting your success')
             .setDescription(`We've added 2 succes points to your account, you now have a total of ${points} points.`)
@@ -172,7 +172,7 @@ export class SuccessService {
         // eslint-disable-next-line @typescript-eslint/no-unused-vars
         const [previousPoints, points] = await this.userService.mutateSuccessPoints(user.id, 'substract', 1);
         
-        const embed = new MessageEmbed()
+        const embed = new EmbedBuilder()
             .setColor(webhookStyles.color)
             .setTitle('Your tweet was deleted!')
             .setDescription(`You now have a total of ${points} points.`)
@@ -194,7 +194,7 @@ export class SuccessService {
 
         // Free month
         if (previousPoints < freeMonth && points >= freeMonth){
-            const embed = new MessageEmbed()
+            const embed = new EmbedBuilder()
                 .setColor(webhookStyles.color)
                 .setTitle(`:tada: Ding Dong! ${msg.author.tag} earned a free month! :tada:`)
                 .setDescription(`<@${msg.author.id}> please open a ticket to claim.`)
@@ -206,7 +206,7 @@ export class SuccessService {
 
         // Chef role
         else if (previousPoints < chefRole && points >= chefRole){
-            const embed = new MessageEmbed()
+            const embed = new EmbedBuilder()
                 .setColor(webhookStyles.color)
                 .setTitle(`:tada: Ding Dong! ${msg.author.tag} earned the chef role! :tada:`)
                 .setDescription(`<@${msg.author.id}> please open a ticket to claim.`)
