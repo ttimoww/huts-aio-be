@@ -3,7 +3,7 @@ import { Injectable, Logger,  } from '@nestjs/common';
 
 // Discord
 import { InjectDiscordClient } from '@discord-nestjs/core';
-import { Client, ClientUser, Guild, Message, MessageEmbed, MessageReaction, Role, TextChannel } from 'discord.js';
+import { Client, ClientUser, Guild, Message, EmbedBuilder, MessageReaction, Role, TextChannel } from 'discord.js';
 
 // Config
 import * as config from 'config';
@@ -24,8 +24,8 @@ export class RoleSelectionService {
      * Creates the embed with all reaction roles
      * @returns The embed
      */
-    private createEmbed(): MessageEmbed{
-        const embed = new MessageEmbed()
+    private createEmbed(): EmbedBuilder{
+        const embed = new EmbedBuilder()
             .setColor(webhookStyles.color)
             .setTitle('Role Selection')
             .setDescription('React below to receive your role\n\n')
@@ -34,11 +34,11 @@ export class RoleSelectionService {
             .setFooter({ text: 'HutsAIO', iconURL: `${webhookStyles.icon}?roleselection=${this.MESSAGE_ID}` });
     
         roles.forEach(r => {
-            embed.setDescription(embed.description + `${r.roleEmoji} - ${r.roleName} \n`);
+            embed.setDescription(embed.data.description + `${r.roleEmoji} - ${r.roleName} \n`);
         });    
 
         // Add an hidden character for some extra spacing
-        embed.setDescription(embed.description + '‎');
+        embed.setDescription(embed.data.description + '‎');
 
         return embed;
     }
