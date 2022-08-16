@@ -21,13 +21,13 @@ export class TesterRemoveSubCommand implements DiscordTransformedCommand<TesterC
         const embed = this.embedService.getEmbedBase();
 
         if (success) {
-            embed.title = '✅  Success';
-            embed.description = `Successfully removed tester role from <@${dto.user}>`;
+            embed.setTitle('✅  Success');
+            embed.setDescription(`Successfully **removed** tester role from <@${dto.user}>`);
             interaction.reply({ embeds: [embed] });
         }
         else{
-            embed.title = '❌ Error';
-            embed.description = `Unable to remove tester role from <@${dto.user}>`;
+            embed.setTitle('❌ Error');
+            embed.setDescription(`Unable to **remove** tester role from <@${dto.user}>`);
             interaction.reply({ embeds: [embed] });
         }
     }

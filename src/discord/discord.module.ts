@@ -1,6 +1,6 @@
 import { Module } from '@nestjs/common';
 import { DiscordModule as DiscModule } from '@discord-nestjs/core';
-import { Intents } from 'discord.js';
+import { GatewayIntentBits, Partials } from 'discord.js';
 import { HttpModule, HttpService } from '@nestjs/axios';
 
 // Gateways
@@ -37,8 +37,16 @@ import { RoleSelectionService } from './services/role-selection.service';
             useFactory: () => ({
                 token: process.env.DISC_BOT_TOKEN,
                 discordClientOptions: {
-                    intents: [Intents.FLAGS.GUILDS, Intents.FLAGS.GUILD_MESSAGES, Intents.FLAGS.GUILD_MESSAGE_REACTIONS],
-                    partials: ['REACTION']
+                    intents: [
+                        GatewayIntentBits.Guilds, 
+                        GatewayIntentBits.GuildMessages, 
+                        GatewayIntentBits.GuildMessageReactions, 
+                        GatewayIntentBits.MessageContent
+                    ],
+                    partials: [
+                        Partials.Reaction, 
+                        Partials.Message
+                    ]
                 },
             }),
         }),
