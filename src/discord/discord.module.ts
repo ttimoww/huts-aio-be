@@ -37,8 +37,16 @@ import { RoleSelectionService } from './services/role-selection.service';
             useFactory: () => ({
                 token: process.env.DISC_BOT_TOKEN,
                 discordClientOptions: {
-                    intents: [GatewayIntentBits.Guilds, GatewayIntentBits.GuildMessages, GatewayIntentBits.GuildMessageReactions, GatewayIntentBits.MessageContent],
-                    partials: [Partials.Reaction, Partials.Message]
+                    intents: [
+                        GatewayIntentBits.Guilds, 
+                        GatewayIntentBits.GuildMessages, 
+                        GatewayIntentBits.GuildMessageReactions, 
+                        GatewayIntentBits.MessageContent
+                    ],
+                    partials: [
+                        Partials.Reaction, 
+                        Partials.Message
+                    ]
                 },
             }),
         }),

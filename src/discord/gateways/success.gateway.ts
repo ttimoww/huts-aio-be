@@ -22,7 +22,6 @@ export class SuccessGateway {
     // @UseGuards(ChannelGuard(process.env.DISC_SUCCESS_POST_CHANNEL))
     @On('messageCreate')
     async onMessage(msg: Message): Promise<void> {
-        console.log(msg);
         if (!msg.author.bot) {
             this.successService.handleSuccessPost(msg);
         }
@@ -31,7 +30,6 @@ export class SuccessGateway {
     @UseGuards(ChannelGuard(process.env.DISC_SUCCESS_POST_CHANNEL))
     @On('messageReactionAdd')
     async onReact(msg: MessageReaction, user: ClientUser): Promise<void> {
-        console.log(msg);
         if (!user.bot){
             this.successService.removeTweet(msg, user);
         }
