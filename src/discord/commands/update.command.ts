@@ -4,7 +4,7 @@ import { Injectable, Logger } from '@nestjs/common';
 // Discrod
 import { Command, UsePipes, Payload, DiscordTransformedCommand, UseGuards, TransformedCommandExecutionContext } from '@discord-nestjs/core';
 import { TransformPipe } from '@discord-nestjs/common';
-import { ActionRowBuilder, ButtonBuilder, ButtonStyle, EmbedBuilder } from 'discord.js';
+import { ActionRowBuilder, ButtonBuilder, ButtonStyle } from 'discord.js';
 
 // Guards
 import { StaffOnlyGuard } from '../guards/staff-only.guard';
@@ -84,7 +84,7 @@ export class UpdateCommand implements DiscordTransformedCommand<UpdateCommandDto
                 }
                 
                 /**
-                 * Dot nothing on cancel
+                 * Do nothing on cancel
                  */
                 embed.setColor('#e74c3c');
                 await i.update({ components: [], embeds: [embed] });

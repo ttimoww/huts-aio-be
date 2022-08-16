@@ -13,7 +13,6 @@ import { Public } from './decorators/public.decorator';
 import { LocalAuthGuard } from './guards/local.guard';
 
 // Dto
-import { UserDto } from './dto/user.dto';
 import { UserTokenDto } from './dto/user-token.dto';
 
 // Interfaces
