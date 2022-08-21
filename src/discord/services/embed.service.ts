@@ -167,7 +167,7 @@ export class EmbedService {
         if (notes) description = description + `**Notes**\n${notes}\n\n`;
         
         // Add download
-        description = description + '**Download**\Use the HutsAIO Hub to auto update';
+        description = description + '**Download**\nUse the HutsAIO Hub to auto update';
 
         const embed = new EmbedBuilder()
             .setColor(webhookStyles.color)
