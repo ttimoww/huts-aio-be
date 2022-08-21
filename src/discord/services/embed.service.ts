@@ -171,7 +171,7 @@ export class EmbedService {
 
         const embed = new EmbedBuilder()
             .setColor(webhookStyles.color)
-            .setTitle(`HutsAIO  V${update.version}`)
+            .setTitle(`HutsAIO  ${'`'}V${update.version}${'`'}`)
             .setDescription(description)
             .setTimestamp()
             .setFooter({ text: 'HutsAIO - ' + update.version, iconURL: webhookStyles.icon });
