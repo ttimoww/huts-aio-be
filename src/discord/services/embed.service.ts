@@ -2,6 +2,9 @@
 import { InjectDiscordClient } from '@discord-nestjs/core';
 import { Injectable, Logger } from '@nestjs/common';
 
+// Services
+import { UserService } from 'src/user/user.service';
+
 // Discord
 import { Client, EmbedBuilder, TextChannel, WebhookClient } from 'discord.js';
 
@@ -10,16 +13,15 @@ import { CheckoutDto } from 'src/checkout/checkout.dto';
 
 // Entities
 import { User } from 'src/user/user.entity';
+import { Update } from 'src/core/entities/update.entity';
+import { Log } from 'src/log/entities/log.entity';
+import { ModuleErrorLog } from 'src/log/entities/module-error-log.entity';
 
 // Enums
 import { Store } from 'src/lib/enums/store.enum';
-import { ModuleErrorLog } from 'src/log/entities/module-error-log.entity';
-import { Log } from 'src/log/entities/log.entity';
 
 // Config
 import * as config from 'config';
-import { Update } from 'src/core/entities/update.entity';
-import { UserService } from 'src/user/user.service';
 const webhookStyles = config.get('webhookStyles');
 
 // Dictionary to format the store name
@@ -67,14 +69,12 @@ export class EmbedService {
             const channel = this.discordClient.channels.cache.get(process.env.DISC_PUBLIC_SUCCESS_CHANNEL) as TextChannel;
             const embed = new EmbedBuilder()
                 .setColor(webhookStyles.color)
-                .setTitle('HutsAIO delivered 🥶')
                 .setThumbnail(checkout.productImage)
                 .addFields(
                     { name: 'Product', value: checkout.productUrl ? `[${checkout.productName}](${checkout.productUrl})` : checkout.productName, inline: true },
                     { name: 'Size', value: checkout.productSize, inline: true },
                     { name: 'Price', value: checkout.productPrice, inline: true },
-                    { name: 'Store', value: storeDictionary[checkout.store], inline: true },
-                    { name: 'User', value: user.discordTag, inline: true },
+                    { name: 'Store', value: `||${storeDictionary[checkout.store]}||`, inline: true }
                 )
                 .setTimestamp()
                 .setFooter({ text: 'HutsAIO', iconURL: webhookStyles.icon });
@@ -99,13 +99,12 @@ export class EmbedService {
             const webhookClient = new WebhookClient({ url: webhook.url });
             const embed = new EmbedBuilder()
                 .setColor(webhookStyles.color)
-                .setTitle('HutsAIO delivered 🥶')
                 .setThumbnail(checkout.productImage)
                 .addFields(
                     { name: 'Product', value: checkout.productUrl ? `[${checkout.productName}](${checkout.productUrl})` : checkout.productName, inline: true },
                     { name: 'Size', value: checkout.productSize, inline: true },
                     { name: 'Price', value: checkout.productPrice, inline: true },
-                    { name: 'Store', value: storeDictionary[checkout.store], inline: true },
+                    { name: 'Store', value: `||${storeDictionary[checkout.store]}||`, inline: true }
                 )
                 .setTimestamp()
                 .setFooter({ text: 'HutsAIO', iconURL: webhookStyles.icon });
@@ -157,22 +156,22 @@ export class EmbedService {
      * @param image The additional image
      */
     public createUpdateEmbed(update: Update, notes?: string, image?: string): EmbedBuilder{
-        let description = '**Changelog**\n';
+        let description = '**Changelog**\n```';
 
         // Add changelog
         let changelog = '';
         update.changelog.forEach(u => changelog = changelog + '- ' + u + '\n');
-        description = description + changelog + '\n';
+        description = description + changelog + '```\n';
 
         // Add notes
         if (notes) description = description + `**Notes**\n${notes}\n\n`;
         
         // Add download
-        description = description + '**Download**\nDownload the HutsAIO Hub to install or auto update to this new version';
+        description = description + '**Download**\Use the HutsAIO Hub to auto update';
 
         const embed = new EmbedBuilder()
             .setColor(webhookStyles.color)
-            .setTitle(`HutsAIO Version ${update.version}`)
+            .setTitle(`HutsAIO  V${update.version}`)
             .setDescription(description)
             .setTimestamp()
             .setFooter({ text: 'HutsAIO - ' + update.version, iconURL: webhookStyles.icon });
