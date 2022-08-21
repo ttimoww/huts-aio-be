@@ -27,6 +27,8 @@ import { CoreModule } from 'src/core/core.module';
 import { RoleSelectionGateway } from './gateways/role-selection.gateway';
 import { RoleSelectionService } from './services/role-selection.service';
 
+// Controllers
+import { WebhookController } from './controllers/webhook.controller';
 
 @Module({
     imports: [
@@ -78,6 +80,7 @@ import { RoleSelectionService } from './services/role-selection.service';
         RoleSelectionService,
         TesterService
     ],
-    exports: [EmbedService]
+    exports: [EmbedService],
+    controllers: [WebhookController]
 })
 export class DiscordModule {}
