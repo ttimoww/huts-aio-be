@@ -12,9 +12,6 @@ import { TesterCommand } from './commands/tester.command';
 import { TesterRemoveSubCommand } from './commands/subcommands/tester-remove.subcommand';
 import { TesterAssignSubCommand } from './commands/subcommands/tester-assign.subcommand';
 
-// Controllers
-import { WebhookController } from './controllers/webhook.controller';
-
 // Services
 import { EmbedService } from './services/embed.service';
 import { SuccessService } from './services/success-channel.service';
@@ -81,7 +78,6 @@ import { RoleSelectionService } from './services/role-selection.service';
         RoleSelectionService,
         TesterService
     ],
-    exports: [EmbedService],
-    controllers: [WebhookController]
+    exports: [EmbedService]
 })
 export class DiscordModule {}
