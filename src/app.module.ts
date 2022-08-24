@@ -1,4 +1,4 @@
-import { Module } from '@nestjs/common';
+import { MiddlewareConsumer, Module, NestModule, RequestMethod } from '@nestjs/common';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { ThrottlerGuard, ThrottlerModule } from '@nestjs/throttler';
 import { APP_GUARD } from '@nestjs/core';
@@ -11,6 +11,9 @@ import { DiscordModule } from './discord/discord.module';
 import { ProfileModule } from './profile/profile.module';
 import { LogModule } from './log/log.module';
 import { CoreModule } from './core/core.module';
+
+// Middleware
+import { DomainCheckMiddleware } from './domain-check.middleware';
 
 @Module({
     imports: [
@@ -35,5 +38,10 @@ import { CoreModule } from './core/core.module';
         }
     ],
 })
-
-export class AppModule {}
+export class AppModule implements NestModule {
+    configure(consumer: MiddlewareConsumer) {
+        consumer
+            .apply(DomainCheckMiddleware)
+            .forRoutes({ path: '*', method: RequestMethod.ALL });
+    }
+}
