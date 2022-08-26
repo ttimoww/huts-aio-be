@@ -76,6 +76,7 @@ export class SuccessService {
         const tweet = tweetResp.data as any;
 
         const [previousPoints, points] = await this.userService.mutateSuccessPoints(msg.author.id, 'add', 1);
+        await msg.member.setNickname(`${msg.author.username} (${points})`).catch(() => { /* do nothing */ });
 
         const embed = new EmbedBuilder()
             .setColor(webhookStyles.color)
