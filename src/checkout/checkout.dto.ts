@@ -6,7 +6,10 @@ export class CheckoutDto  {
     @IsEnum(Store)
     @ApiProperty({ name: 'store', enum: Store })
         store: Store;
-    
+
+    @ApiProperty()
+        createdAt: Date;
+            
     @ApiProperty()
     @IsString()
         productName: string;
