@@ -31,7 +31,11 @@ export class CheckoutService {
      * @returns The user's checkouts
      */
     async getCheckouts(user: User): Promise<CheckoutDto[]>{
-        const checkouts = await this.checkoutRepository.find({ where: { user: user } });
+        const checkouts = await this.checkoutRepository.find({ 
+            where: { user: user }, 
+            order: { checkoutId: 'DESC' },
+            take: 40 
+        });
         return checkouts.map(checkout => checkout);
     }
 
