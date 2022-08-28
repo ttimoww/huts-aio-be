@@ -24,16 +24,8 @@ import { Store } from 'src/lib/enums/store.enum';
 import * as config from 'config';
 const webhookStyles = config.get('webhookStyles');
 
-// Dictionary to format the store name
-const storeDictionary = {
-    [Store.LVR]: 'Luisaviaroma',
-    [Store.Snipes]: 'Snipes',
-    [Store.Solebox]: 'Solebox',
-    [Store.Zalando]: 'Zalando',
-    [Store.Kith]: 'Kith EU',
-    [Store.Supreme]: 'Supreme',
-    [Store.NewBalance]: 'New Balance',
-};
+// Others
+import { storeNameDictionary } from 'src/lib/dictionaries/store-name.dictionary';
 
 @Injectable()
 export class EmbedService {
@@ -66,7 +58,7 @@ export class EmbedService {
                     { name: 'Product', value: checkout.productUrl ? `[${checkout.productName}](${checkout.productUrl})` : checkout.productName, inline: true },
                     { name: 'Size', value: checkout.productSize, inline: true },
                     { name: 'Price', value: checkout.productPrice, inline: true },
-                    { name: 'Store', value: `||${storeDictionary[checkout.store]}||`, inline: true },
+                    { name: 'Store', value: `||${storeNameDictionary[checkout.store]}||`, inline: true },
                     { name: 'User', value: user.discordTag, inline: true }
                 )
                 .setTimestamp()
@@ -98,7 +90,7 @@ export class EmbedService {
                     { name: 'Product', value: checkout.productUrl ? `[${checkout.productName}](${checkout.productUrl})` : checkout.productName, inline: true },
                     { name: 'Size', value: checkout.productSize, inline: true },
                     { name: 'Price', value: checkout.productPrice, inline: true },
-                    { name: 'Store', value: `||${storeDictionary[checkout.store]}||`, inline: true }
+                    { name: 'Store', value: `||${storeNameDictionary[checkout.store]}||`, inline: true }
                 )
                 .setTimestamp()
                 .setFooter({ text: 'HutsAIO', iconURL: webhookStyles.icon });
@@ -128,7 +120,7 @@ export class EmbedService {
                     { name: 'Product', value: checkout.productUrl ? `[${checkout.productName}](${checkout.productUrl})` : checkout.productName, inline: true },
                     { name: 'Size', value: checkout.productSize, inline: true },
                     { name: 'Price', value: checkout.productPrice, inline: true },
-                    { name: 'Store', value: `||${storeDictionary[checkout.store]}||`, inline: true }
+                    { name: 'Store', value: `||${storeNameDictionary[checkout.store]}||`, inline: true }
                 )
                 .setTimestamp()
                 .setFooter({ text: 'HutsAIO', iconURL: webhookStyles.icon });
@@ -160,7 +152,7 @@ export class EmbedService {
                 .setColor('#e74c3c')
                 .setTitle('Module Error')
                 .addFields(
-                    { name: 'Store', value: storeDictionary[log.store], inline: true },
+                    { name: 'Store', value: storeNameDictionary[log.store], inline: true },
                     { name: 'User', value: moduleErrorLog.user.discordTag, inline: true },
                     { name: 'Error', value: '```' + moduleErrorLog.error + '```' },
                     { name: 'Info', value: '```' + moduleErrorLog.extraInfo + '```', inline: true },

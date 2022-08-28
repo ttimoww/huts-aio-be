@@ -16,16 +16,8 @@ import { ReleaseGuideCommandDto } from '../dto/release-guide-command.dto';
 import { EmbedService } from '../services/embed.service';
 import { Store } from 'src/lib/enums/store.enum';
 
-// Dictionary to format the store name
-const storeDictionary = {
-    [Store.LVR]: 'Luisaviaroma',
-    [Store.Snipes]: 'Snipes',
-    [Store.Solebox]: 'Solebox',
-    [Store.Zalando]: 'Zalando',
-    [Store.Kith]: 'Kith EU',
-    [Store.Supreme]: 'Supreme',
-    [Store.NewBalance]: 'New Balance',
-};
+// Others
+import { storeNameDictionary } from 'src/lib/dictionaries/store-name.dictionary';
 
 @Command({
     name: 'release-guide',
@@ -55,7 +47,7 @@ export class ReleaseGuideCommand implements DiscordTransformedCommand<ReleaseGui
         const embed = this.webhookService.getEmbedBase(true);
 
         try {
-            embed.setTitle(`New ${storeDictionary[dto.store]} Drop`);
+            embed.setTitle(`New ${storeNameDictionary[dto.store]} Drop`);
             embed.setImage(dto.image);
 
             let description = `
