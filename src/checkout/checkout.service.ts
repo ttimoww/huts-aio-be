@@ -46,8 +46,6 @@ export class CheckoutService {
      * @returns The saved checkout
      */
     async createCheckout(user: User, body: CheckoutDto): Promise<CheckoutDto>{
-        this.logger.verbose(`${user.discordTag} checked out a product`);
-
         /**
          * Check the Product Image
          * When the URL is invalid, add the websites logo
@@ -65,6 +63,7 @@ export class CheckoutService {
         this.webhookService.sendCheckout(user, body);
         try {
             const checkout = await this.checkoutRepository.save(new Checkout(body, user));   
+            this.logger.verbose(`${user.discordTag} checked out ${checkout.productName} (${checkout.checkoutId})`);
             return checkout;
         } catch (err) {
             this.logger.error('Failed to save new checkout', err);
