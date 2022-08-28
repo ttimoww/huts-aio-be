@@ -9,6 +9,7 @@ import { SuccessGateway } from './gateways/success.gateway';
 // Commands
 import { UpdateCommand } from './commands/update.command';
 import { TesterCommand } from './commands/tester.command';
+import { ReleaseGuideCommand } from './commands/release-guide.command';
 import { TesterRemoveSubCommand } from './commands/subcommands/tester-remove.subcommand';
 import { TesterAssignSubCommand } from './commands/subcommands/tester-assign.subcommand';
 
@@ -72,6 +73,7 @@ import { WebhookController } from './controllers/webhook.controller';
         },
         UpdateCommand, 
         TesterCommand, 
+        ReleaseGuideCommand,
         TesterAssignSubCommand, 
         TesterRemoveSubCommand, 
         SuccessGateway, 

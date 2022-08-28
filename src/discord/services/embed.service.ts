@@ -34,6 +34,7 @@ const storeDictionary = {
     [Store.Supreme]: 'Supreme',
     [Store.NewBalance]: 'New Balance',
 };
+
 @Injectable()
 export class EmbedService {
     private logger = new Logger(EmbedService.name);
@@ -207,12 +208,17 @@ export class EmbedService {
      * Get a blank Embed in HutsAIO theme
      * @returns Blank Embed with HutsAIO theme
      */
-    public getEmbedBase(): EmbedBuilder{
-        return new EmbedBuilder()
+    public getEmbedBase(addLogoThumbnail?: boolean): EmbedBuilder{
+        const embed = new EmbedBuilder()
             .setColor(webhookStyles.color)
             .setTitle('HutsAIO')
             .setTimestamp()
             .setFooter({ text: 'HutsAIO', iconURL: webhookStyles.icon });
+
+        if (addLogoThumbnail)
+            embed.setThumbnail(webhookStyles.thumbnail);
+
+        return embed;
     }
 
     /**

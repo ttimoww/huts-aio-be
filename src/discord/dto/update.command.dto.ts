@@ -1,6 +1,5 @@
 import { Param } from '@discord-nestjs/core';
 
-
 export class UpdateCommandDto {
   @Param({ description: 'Version', required: true })
       version: string;
