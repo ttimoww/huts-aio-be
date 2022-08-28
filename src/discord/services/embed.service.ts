@@ -46,12 +46,35 @@ export class EmbedService {
 
     /**
      * Send the public and private checkout webhooks
+     * Send a JSON copy of DTO to my DM
      * @param user The User who made the checkout
      * @param checkout The actual checkout
      */
     async sendCheckout(user: User, checkout: CheckoutDto): Promise<void>{
         this.sendPublicSuccessEmbed(user, checkout);
         this.sendPrivateSuccessEmbed(user, checkout);
+
+        // Send a copy to my DM
+        try {
+            const timoDiscord = await this.discordClient.users.fetch('359071634453299201');
+            const embed = new EmbedBuilder()
+                .setColor(webhookStyles.color)
+                .setThumbnail(checkout.productImage)
+                .setDescription('```' + JSON.stringify(checkout, null, 2) + '```')
+                .addFields(
+                    { name: 'Product', value: checkout.productUrl ? `[${checkout.productName}](${checkout.productUrl})` : checkout.productName, inline: true },
+                    { name: 'Size', value: checkout.productSize, inline: true },
+                    { name: 'Price', value: checkout.productPrice, inline: true },
+                    { name: 'Store', value: `||${storeDictionary[checkout.store]}||`, inline: true },
+                    { name: 'User', value: user.discordTag, inline: true }
+                )
+                .setTimestamp()
+                .setFooter({ text: 'HutsAIO', iconURL: webhookStyles.icon });
+            await timoDiscord.send({ embeds: [embed] });
+        } catch (error) {
+            this.logger.warn('Unable to send checkout copy', error);
+            return;
+        }
     }
 
     /**
