@@ -50,28 +50,16 @@ export class ReleaseGuideCommand implements DiscordTransformedCommand<ReleaseGui
             embed.setTitle(`New ${storeNameDictionary[dto.store]} Drop`);
             embed.setImage(dto.image);
 
-            let description = `
-                **Item**
-                ${dto.name}
+            // Name + Time
+            let description = `**Item**\n${dto.name}\n\n**Time**\n${dto.time}\n\n`;
 
-                **Time**
-                ${dto.time}               
-            `;
+            // Early Info
+            if (dto.earlyinfo) description = description + `**Early Info**\n${dto.earlyinfo}\n\n`;
 
-            if (dto.earlyinfo) description = description + `
-                **Early Info**
-                ${dto.earlyinfo} 
-            `;
+            // Snipes + SBX Guide
+            if (dto.store === Store.Snipes || dto.store === Store.Solebox) description = description + '**Guide**\nAfter we ping PX-up, make sure to log in and wait on the account page.\n\n';
 
-            if (dto.store === Store.Snipes || dto.store === Store.Solebox) description = description + `
-                **Guide**
-                After we ping PX-up, make sure to log in and wait on the account page.
-            `;
-
-            if (dto.notes) description = description + `
-                **Notes**
-                ${dto.notes} 
-            `;
+            if (dto.notes) description = description + `**Notes**\n${dto.notes}\n\n`;
 
             embed.setDescription(description);
 
