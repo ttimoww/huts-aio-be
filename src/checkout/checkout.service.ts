@@ -57,7 +57,7 @@ export class CheckoutService {
             else if (body.store === Store.Snipes) body.productImage = 'https://i.imgur.com/PPBtTL0.jpeg';
             else if (body.store === Store.Zalando) body.productImage = 'https://i.imgur.com/JJd4MoM.jpeg';
             else if (body.store === Store.Supreme) body.productImage = 'https://i.imgur.com/FDdtFlt.jpeg';
-            else body.productImage = 'https://i.imgur.com/cXu8bLX.png';
+            else body.productImage = 'https://i.imgur.com/czpy4Bq.png';
         }
 
         this.webhookService.sendCheckout(user, body);

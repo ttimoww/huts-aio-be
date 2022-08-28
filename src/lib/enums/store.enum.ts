@@ -5,5 +5,6 @@ export enum Store{
     LVR = 'lvr',
     Kith = 'kith',
     Supreme = 'supreme',
-    NewBalance = 'New Balance'
+    NewBalance = 'New Balance',
+    Shopify = 'Shopify'
 }
