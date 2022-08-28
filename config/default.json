@@ -5,6 +5,7 @@
     },
     "webhookStyles": {
         "icon": "https://i.imgur.com/czpy4Bq.png",
+        "thumbnail": "https://i.imgur.com/czpy4Bq.png",
         "color": "#6366F1"
     },
     "testerRole": {
