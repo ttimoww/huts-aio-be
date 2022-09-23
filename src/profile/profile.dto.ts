@@ -5,7 +5,6 @@ export class ProfileDto{
     @ApiProperty()
     @IsString()
     @IsNotEmpty()
-    @IsNotEmpty()
         profileName: string;
 
     @ApiProperty()
@@ -35,7 +34,6 @@ export class ProfileDto{
 
     @ApiProperty()
     @IsString()
-    @IsNotEmpty()
         houseNumber: string;
 
     @ApiProperty()
@@ -45,7 +43,6 @@ export class ProfileDto{
 
     @ApiProperty()
     @IsString()
-    @IsNotEmpty()
         province: string;
 
     @ApiProperty()
