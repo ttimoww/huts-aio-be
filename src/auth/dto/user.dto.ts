@@ -12,6 +12,9 @@ export class UserDto {
 
     @ApiProperty()
         isTester: boolean;
+
+    @ApiProperty()
+        isLite: boolean;
         
     @ApiProperty()
         plan: string;

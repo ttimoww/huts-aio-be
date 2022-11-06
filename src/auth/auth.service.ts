@@ -111,6 +111,7 @@ export class AuthService {
         license.key = key;
         license.ip = ip;
         license.plan = keyData.plan;
+        license.planId = keyData.planId;
         await this.licenseRepository.save(license);
 
         /**
@@ -154,12 +155,22 @@ export class AuthService {
             relations: ['user']
         });
 
-        if (!license) throw new UnauthorizedException();
+
+        if (!license) 
+            throw new UnauthorizedException();
 
         const msSinceLastAuth = new Date().getTime() - license.lastValidation.getTime() ;
-        if (msSinceLastAuth > 300000) { // 300000ms = 5min
+        if (msSinceLastAuth > 1) { // 300000ms = 5min
             const keyData = await this.getHyperKeyData(license.key);
-            
+
+            /**
+             * If the plan id changed, the user should always re-authenticate
+             */
+            if (license.planId !== keyData.planId) {
+                this.logger.verbose(`User ${license.user.discordTag} was logged out because of a plan change`);
+                throw new UnauthorizedException();
+            }
+
             /**
              * Update the last validation date
              */

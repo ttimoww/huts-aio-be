@@ -43,7 +43,8 @@ export class AuthController {
             email: license.user.email,
             plan: license.plan,
             key: license.key,
-            isTester: license.user.isTester
+            isTester: license.user.isTester,
+            isLite: license.planId === '8DIB-rp9kr4TdNfnGInKa' // ID of the Renewal Lite plan
         };
     }
 
