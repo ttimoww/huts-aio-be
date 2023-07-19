@@ -32,25 +32,25 @@ export class AuthService {
         private readonly userService: UserService,
         private readonly jwtService: JwtService,
         private readonly httpService: HttpService
-    ){}
+    ) { }
 
     /**
      * Check if the license key is valid, if key is invalid throw InvalidKeyException
      * @param key The Hyper license key
      */
-    private async getHyperKeyData(key: string): Promise<HyperKeyData>{
+    private async getHyperKeyData(key: string): Promise<HyperKeyData> {
         try {
             const resp = await lastValueFrom(this.httpService.get(`https://api.hyper.co/v4/licenses/${key}`, {
                 headers: {
-                    Authorization: 'Bearer pk_XZ8fCRvSNfP6oiRAvlClcy7ljVGSJJdk'
+                    Authorization: process.env.HYPER_API_KEY
                 }
             }).pipe(map(resp => resp)));
 
             const { data } = resp;
 
             return new HyperKeyData(
-                data.user.discord.username, 
-                data.user.discord.id, 
+                data.user.discord.username,
+                data.user.discord.id,
                 data.user.photo_url || 'https://i.imgur.com/czpy4Bq.png',
                 data.email,
                 data.plan.id,
@@ -60,12 +60,12 @@ export class AuthService {
             );
 
         } catch (error) {
-            if (error.response?.status === 404){
+            if (error.response?.status === 404) {
                 this.logger.verbose(`Rejected ${key} (invalid key)`);
                 throw new InvalidKeyException();
             }
             this.logger.error('Unable to check Hyper license', error);
-            throw new InternalServerErrorException('Unable to check Hyper license'); 
+            throw new InternalServerErrorException('Unable to check Hyper license');
         }
     }
 
@@ -74,10 +74,10 @@ export class AuthService {
      * If its the first time the User is logging in, a new User will be created
      * @param key The Hyper key
      */
-    async validateHyperLicense(req: Request, key: string): Promise<License> {        
+    async validateHyperLicense(req: Request, key: string): Promise<License> {
         const ip = requestIp.getClientIp(<any>req);
         const keyData = await this.getHyperKeyData(key);
- 
+
         /**
          * Find existing license
          */
@@ -93,7 +93,7 @@ export class AuthService {
             try {
                 let user = await this.userService.findOne({ where: { discordId: keyData.discordId } });
                 if (!user) user = await this.userService.save(new User(keyData.email, keyData.discordId, keyData.discordTag, keyData.discordImage));
-                
+
                 const license = await this.licenseRepository.save(new License(keyData.licenseId, keyData.planId, keyData.plan, keyData.key, new Date(), ip, user));
 
                 this.logger.verbose(`${license.user.discordTag} logged in with a new license (${license.licenseId})`);
@@ -131,7 +131,7 @@ export class AuthService {
      * Creates a JWT token with payload
      * @param licence The License
      */
-    async createToken(license: License): Promise<{access_token: string}> {
+    async createToken(license: License): Promise<{ access_token: string }> {
         const payload: JwtPayload = { licenseId: license.licenseId };
         return {
             access_token: this.jwtService.sign(payload),
@@ -143,7 +143,7 @@ export class AuthService {
      * @param req The request
      * @param payload The Jwt Payload
      */
-    async validateToken(req: Request, payload: JwtPayload): Promise<User>{
+    async validateToken(req: Request, payload: JwtPayload): Promise<User> {
         const ip = requestIp.getClientIp(<any>req);
 
         /**
@@ -156,10 +156,10 @@ export class AuthService {
 
         if (!license) throw new UnauthorizedException();
 
-        const msSinceLastAuth = new Date().getTime() - license.lastValidation.getTime() ;
+        const msSinceLastAuth = new Date().getTime() - license.lastValidation.getTime();
         if (msSinceLastAuth > 300000) { // 300000ms = 5min
             const keyData = await this.getHyperKeyData(license.key);
-            
+
             /**
              * Update the last validation date
              */
